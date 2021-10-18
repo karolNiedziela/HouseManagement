@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/shared/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -8,6 +10,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+
+  final AuthService _authService = new AuthService();
+
   final _formKey = GlobalKey<FormState>();
 
   final firstNameEditingController = new TextEditingController();
@@ -15,6 +20,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final emailEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
   final confirmPasswordEditingController = new TextEditingController();
+
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         firstNameEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          prefixIcon: Icon(Icons.person_sharp),
-          hintText: 'First name',
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.indigo, width: 2.0),
-              borderRadius: BorderRadius.circular(15)),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+      decoration: authInputDecoration.copyWith(hintText: 'First name', prefixIcon: Icon(Icons.person_sharp)),
     );
 
     //second name field
@@ -46,14 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         secondNameEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          prefixIcon: Icon(Icons.person_sharp),
-          hintText: 'Second name',
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.indigo, width: 2.0),
-              borderRadius: BorderRadius.circular(15)),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+      decoration: authInputDecoration.copyWith(hintText: 'Second name', prefixIcon: Icon(Icons.person_sharp)),
     );
 
     // email field
@@ -66,14 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         emailEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          prefixIcon: Icon(Icons.email),
-          hintText: 'Email',
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.indigo, width: 2.0),
-              borderRadius: BorderRadius.circular(15)),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+      decoration: authInputDecoration.copyWith(hintText: 'Email', prefixIcon: Icon(Icons.email)),
     );
 
     // password field
@@ -86,15 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         obscureText: true,
         textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.lock),
-            hintText: 'Password',
-            contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.indigo, width: 2.0),
-                borderRadius: BorderRadius.circular(15)),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
+        decoration: authInputDecoration.copyWith(hintText: 'Password', prefixIcon: Icon(Icons.lock)));
 
     // confirm password field
     final confirmPasswordField = TextFormField(
@@ -106,15 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         obscureText: true,
         textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.lock),
-            hintText: 'Confirm password',
-            contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.indigo, width: 2.0),
-                borderRadius: BorderRadius.circular(15)),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
+        decoration: authInputDecoration.copyWith(hintText: 'Confirm password', prefixIcon: Icon(Icons.lock)));
 
     final registerButton = Material(
         elevation: 5,
@@ -123,7 +93,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: MaterialButton(
           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
-          onPressed: () {},
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              setState(() {
+                loading = true;
+              });
+
+            dynamic result = await _authService.createUserWithEmailAndPassword(
+              emailEditingController.value.toString(), 
+              passwordEditingController.value.toString());
+              if (result == null) {
+              setState(() {
+                loading = false;
+                print('Error');
+              });
+            }
+            }
+
+
+          },
           child: const Text('Register',
               textAlign: TextAlign.center,
               style: TextStyle(
