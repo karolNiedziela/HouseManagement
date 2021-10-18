@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1096340784957",
+    "project_id": "house-management-251ad",
+    "storage_bucket": "house-management-251ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096340784957:android:7bbeff9a82dac1379d2754",
+        "android_client_info": {
+          "package_name": "com.example.housemanagement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096340784957-ha9b7lt2cmroan4crcu2fv7ea5sncilj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.housemanagement",
+            "certificate_hash": "d573b4eba5f41096850577f1c38cec2730c32d7a"
+          }
+        },
+        {
+          "client_id": "1096340784957-roh1o9g44g86l88gcd4647rg0t8avjt2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk3NMqzMJ8ef_xPL7fdk5X0atYVfs2Sv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096340784957-roh1o9g44g86l88gcd4647rg0t8avjt2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:housemanagement/screens/auth/register_screen.dart';
-import 'package:housemanagement/shared/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -32,23 +30,35 @@ class _LoginScreenState extends State<LoginScreen> {
         emailEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: authInputDecoration.copyWith(hintText: 
-      'Email', prefixIcon: Icon(Icons.email),
-      )
+      decoration: InputDecoration(
+          prefixIcon: Icon(Icons.email),
+          hintText: 'Email',
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.indigo, width: 2.0),
+              borderRadius: BorderRadius.circular(15)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
     );
 
     // password field
     final passwordField = TextFormField(
         autofocus: false,
         controller: passwordEditingController,
-        keyboardType: TextInputType.visiblePassword,
         // validator: (value) => null,
         onSaved: (value) {
           passwordEditingController.text = value!;
         },
         obscureText: true,
         textInputAction: TextInputAction.done,
-        decoration: authInputDecoration.copyWith(hintText: 'Password', prefixIcon: Icon(Icons.lock)));
+        decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.lock),
+            hintText: 'Password',
+            contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.indigo, width: 2.0),
+                borderRadius: BorderRadius.circular(15)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
 
     final loginButton = Material(
         elevation: 5,
