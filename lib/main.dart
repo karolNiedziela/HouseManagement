@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/screens/auth/login_screen.dart';
-import 'package:housemanagement/screens/home/home_screen.dart';
+import 'package:housemanagement/models/app_user.dart';
+import 'package:housemanagement/screens/household/household_screen.dart';
+import 'package:housemanagement/screens/invitations/invitation_screen.dart';
+import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/shared/auth_wrapper.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -12,12 +19,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'House management',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: HomeScreen(),
-    );
+    return StreamProvider<AppUser?>.value(
+        value: AuthService().appUser,
+        initialData: null,
+        child: MaterialApp(
+            routes: {
+              '/household': (context) => HouseHouldScreen(),
+              '/invitations': (context) => InvitationScreen()
+            },
+            title: 'House management',
+            theme: ThemeData(
+              primarySwatch: Colors.indigo,
+            ),
+            home: AuthWrapper()));
   }
 }
