@@ -18,7 +18,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   getData() async {
     var invitations = await _userService.getUserFriendRequests();
-    if (this.mounted && invitations.length > 0) {
+    if (mounted && invitations.isNotEmpty) {
       setState(() {
         hasFriendRequests = true;
         friendRequestsNumber = invitations.length;
@@ -58,6 +58,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           style: TextStyle(color: Colors.indigo, fontSize: 17)),
                       leading: Icon(Icons.person_sharp, color: Colors.indigo),
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.pushNamed(context, '/household');
                       },
                     ),
@@ -66,7 +67,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           style: TextStyle(color: Colors.indigo, fontSize: 17)),
                       leading:
                           const Icon(Icons.shopping_cart, color: Colors.indigo),
-                      onTap: () {},
+                      onTap: () {
+                         Navigator.pop(context);
+                        Navigator.pushNamed(context, '/shoppinglist');
+
+                      },
                     ),
                     if (hasFriendRequests)
                       ListTile(
@@ -88,6 +93,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           ),
                         ),
                         onTap: () {
+                          Navigator.pop(context);
                           Navigator.pushNamed(context, '/invitations');
                         },
                       )

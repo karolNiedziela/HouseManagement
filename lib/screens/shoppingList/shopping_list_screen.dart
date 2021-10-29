@@ -37,7 +37,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text('Sklep spożywczy bied',
+                              Text('Sklep spożywczy',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17.0)),

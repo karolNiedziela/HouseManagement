@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Invitation {
   String receiverUId;
   String senderUId;

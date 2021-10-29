@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/services/user_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:housemanagement/widgets/drawer_widget.dart';
+import 'package:housemanagement/widgets/main_scaffold.dart';
 
 class HouseHouldScreen extends StatefulWidget {
   const HouseHouldScreen({Key? key}) : super(key: key);
@@ -33,12 +35,13 @@ class _HouseHouldScreenState extends State<HouseHouldScreen> {
               title: const Text('Household'),
               centerTitle: true,
             ),
+            drawer: DrawerWidget(),
             body: ListView(
               children: <Widget>[
                 Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: const Text('KN'),
+                      child: Text(''),
                     ),
                     title: Text(fullName),
                     trailing: const Icon(Icons.more_vert),

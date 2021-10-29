@@ -17,12 +17,7 @@ class _InvitationScreenState extends State<InvitationScreen> {
     return StreamProvider<List<Invitation>>.value(
         initialData: [],
         value: UserService().appUserInvitations,
-        child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.indigo,
-              title: const Text('Invitation to household group'),
-              centerTitle: true,
-            ),
-            body: InvitationList()));
+        child: Container(
+            child: InvitationList()));
   }
 }

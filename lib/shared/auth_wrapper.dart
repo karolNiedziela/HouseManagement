@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/screens/auth/authenticate_screen.dart';
-import 'package:housemanagement/screens/home/home_screen.dart';
+import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
+import 'package:housemanagement/widgets/main_scaffold.dart';
 import 'package:provider/provider.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -11,12 +12,10 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
 
-    print(appUser);
-
     if (appUser == null) {
       return AuthenticateScreen();
     }
 
-    return HomeScreen();
+    return MainScaffoldWidget(body: ShoppingListScreen(), appBarTitle: 'Shopping list',);
   }
 }
