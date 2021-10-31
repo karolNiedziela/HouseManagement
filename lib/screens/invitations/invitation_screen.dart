@@ -15,9 +15,8 @@ class _InvitationScreenState extends State<InvitationScreen> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Invitation>>.value(
-        initialData: [],
+        initialData: const [],
         value: UserService().appUserInvitations,
-        child: Container(
-            child: InvitationList()));
+        child: const InvitationList());
   }
 }

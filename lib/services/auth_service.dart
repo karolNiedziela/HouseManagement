@@ -36,7 +36,7 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
       User user = userCredential.user!;
       FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-      AppUser appUser = new AppUser(
+      AppUser appUser = AppUser(
           uid: user.uid,
           email: user.email,
           firstName: firstName,
@@ -74,7 +74,6 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }

@@ -2,12 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/models/invitation.dart';
 import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/services/household_service.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
+  final HouseholdService _householdService = HouseholdService();
 
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
+
+  Future<AppUser> getByUId(String? uId) async {
+    if (uId == null) {
+      return await userCollection.doc(_authService.uid).get().then(
+          (value) => AppUser.fromMap(value.data() as Map<String, dynamic>));
+    }
+    return await userCollection
+        .doc(uId)
+        .get()
+        .then((value) => AppUser.fromMap(value.data() as Map<String, dynamic>));
+  }
 
   Future<AppUser> getByEmail(String email) async {
     var documentSnapshot =
@@ -19,21 +32,16 @@ class UserService {
     return appUser;
   }
 
-  Future<String> getFullName() async {
-    var documentSnapshot = await userCollection.doc(_authService.uid).get();
-    var map = (documentSnapshot.data() as Map<String, dynamic>);
-    var appUser = AppUser.fromMap(map);
-    return "${appUser.firstName}  ${appUser.secondName}";
+  Stream<List<Invitation>> get appUserInvitations {
+    return userCollection
+        .doc(_authService.uid)
+        .collection('invitations')
+        .where('invitationStatus', isEqualTo: InvitationStatus.none.index)
+        .snapshots()
+        .map(_invitationListFromSnapshot);
   }
 
   List<Invitation> _invitationListFromSnapshot(QuerySnapshot snapshot) {
-    // return snapshot.docs.map((doc) {
-    //   return Invitation(
-    //       receiverUId: doc.get('receiverUId') ?? '',
-    //       senderUId: doc.get('senderUId') ?? '',
-    //       senderFullName: doc.get('senderFullName') ?? '');
-    // }).toList();
-
     var invitations = snapshot.docs.map((doc) {
       return Invitation(
           receiverUId: doc.get('receiverUId') ?? '',
@@ -46,21 +54,14 @@ class UserService {
         .toList();
   }
 
-  Stream<List<Invitation>> get appUserInvitations {
-    return userCollection
-        .doc(_authService.uid)
-        .collection('invitations')
-        .snapshots()
-        .map(_invitationListFromSnapshot);
-  }
-
   Future<List<Invitation>> getUserFriendRequests() async {
     var documentSnapshot = await userCollection
         .doc(_authService.uid)
         .collection('invitations')
+        .where('invitationStatus', isEqualTo: InvitationStatus.none.index)
         .get();
     List<Invitation> invitations = documentSnapshot.docs.map((e) {
-      var map = (e.data() as Map<String, dynamic>);
+      var map = e.data();
       return Invitation.fromMap(map);
     }).toList();
 
@@ -72,13 +73,13 @@ class UserService {
   Future sendFriendRequest(String receiverEmail) async {
     var receiver = await getByEmail(receiverEmail);
     var currentAppUserUId = _authService.uid!;
-
-    var fullName = await getFullName();
+    var sender = await getByUId(currentAppUserUId);
+    var fullname = "${sender.firstName} ${sender.secondName}";
 
     var invitation = Invitation(
         receiverUId: receiver.uid,
         senderUId: currentAppUserUId,
-        senderFullName: "${fullName}");
+        senderFullName: fullname);
 
     await userCollection
         .doc(receiver.uid)
@@ -91,5 +92,39 @@ class UserService {
         .collection('invitations')
         .doc()
         .set(invitation.toMap());
+  }
+
+  Future changeFriendRequestStatus(
+      String senderUId, InvitationStatus status) async {
+    var senderInvitation = await userCollection
+        .doc(_authService.uid)
+        .collection('invitations')
+        .where('senderUId', isEqualTo: senderUId)
+        .where('receiverUId', isEqualTo: _authService.uid)
+        .get();
+
+    var receiverInvitation = await userCollection
+        .doc(senderUId)
+        .collection('invitations')
+        .where('senderUId', isEqualTo: senderUId)
+        .where('receiverUId', isEqualTo: _authService.uid)
+        .get();
+
+    if (senderInvitation.docs.isNotEmpty) {
+      var invitation = Invitation.fromMap(senderInvitation.docs[0].data());
+      invitation.invitationStatus = status;
+      senderInvitation.docs[0].reference.update(invitation.toMap());
+    }
+
+    if (receiverInvitation.docs.isNotEmpty) {
+      var invitation = Invitation.fromMap(receiverInvitation.docs[0].data());
+      invitation.invitationStatus = status;
+      receiverInvitation.docs[0].reference.update(invitation.toMap());
+    }
+
+    if (status == InvitationStatus.accepted) {
+      await _householdService
+          .createHousehold([senderUId, _authService.uid!], senderUId);
+    }
   }
 }

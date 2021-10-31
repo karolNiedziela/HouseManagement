@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:housemanagement/constants/app_constants.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:housemanagement/shared/loading.dart';
+import 'package:housemanagement/utils/loading.dart';
 import 'package:housemanagement/widgets/email_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/password_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/start_title_widget.dart';

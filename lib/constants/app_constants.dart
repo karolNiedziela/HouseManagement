@@ -7,7 +7,7 @@ InputDecoration getInputDecoration(IconData prefixIcon, String hintText) =>
         hintText: hintText,
         contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.indigo, width: 2.0),
+            borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
             borderRadius: BorderRadius.circular(15)),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)));
 

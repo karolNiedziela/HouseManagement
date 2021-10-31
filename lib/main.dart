@@ -4,7 +4,7 @@ import 'package:housemanagement/screens/household/household_screen.dart';
 import 'package:housemanagement/screens/invitations/invitation_screen.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
 import 'package:housemanagement/services/auth_service.dart';
-import 'package:housemanagement/shared/auth_wrapper.dart';
+import 'package:housemanagement/utils/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:housemanagement/widgets/main_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -26,14 +26,23 @@ class MyApp extends StatelessWidget {
         initialData: null,
         child: MaterialApp(
             routes: {
-              '/household': (context) => HouseHouldScreen(),
-              '/invitations': (context) => MainScaffoldWidget(body: InvitationScreen(), appBarTitle: 'Invitations',),
-              '/shoppinglist': (context) => MainScaffoldWidget(body: ShoppingListScreen(), appBarTitle: 'Shopping list',)
+              '/household': (context) => const MainScaffoldWidget(
+                    body: HouseHouldScreen(),
+                    appBarTitle: 'Household',
+                  ),
+              '/invitations': (context) => const MainScaffoldWidget(
+                    body: InvitationScreen(),
+                    appBarTitle: 'Invitations',
+                  ),
+              '/shoppinglist': (context) => const MainScaffoldWidget(
+                    body: ShoppingListScreen(),
+                    appBarTitle: 'Shopping list',
+                  )
             },
             title: 'House management',
             theme: ThemeData(
               primarySwatch: Colors.indigo,
             ),
-            home: AuthWrapper()));
+            home: const AuthWrapper()));
   }
 }

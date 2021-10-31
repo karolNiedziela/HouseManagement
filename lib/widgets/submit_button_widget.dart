@@ -21,7 +21,7 @@ class _SubmitButtonWidgetState extends State<SubmitButtonWidget> {
       onPressed: () => widget.onPressed(),
       child: Text(widget.displayButtonText,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 20,

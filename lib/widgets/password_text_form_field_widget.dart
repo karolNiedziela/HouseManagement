@@ -21,7 +21,7 @@ class PasswordTextFormFieldWidget extends StatelessWidget {
               return ('Please enter password');
             }
 
-            RegExp regex = new RegExp(r'^.{6,}$');
+            RegExp regex = RegExp(r'^.{6,}$');
             if (!regex.hasMatch(value)) {
               return ("Please enter a valid password (min. 6 characters)");
             }

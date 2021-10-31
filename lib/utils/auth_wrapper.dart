@@ -13,9 +13,12 @@ class AuthWrapper extends StatelessWidget {
     final appUser = Provider.of<AppUser?>(context);
 
     if (appUser == null) {
-      return AuthenticateScreen();
+      return const AuthenticateScreen();
     }
 
-    return MainScaffoldWidget(body: ShoppingListScreen(), appBarTitle: 'Shopping list',);
+    return const MainScaffoldWidget(
+      body: ShoppingListScreen(),
+      appBarTitle: 'Shopping list',
+    );
   }
 }

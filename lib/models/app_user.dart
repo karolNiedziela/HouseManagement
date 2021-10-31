@@ -1,5 +1,3 @@
-import 'package:housemanagement/models/invitation.dart';
-
 class AppUser {
   String uid;
   String? email;
@@ -14,15 +12,6 @@ class AppUser {
         email: map['email'],
         firstName: map['firstName'],
         secondName: map['secondName']);
-  }
-
-  factory AppUser.fromMapWithInvitations(Map<String, dynamic> map) {
-    return AppUser(
-      uid: map['uid'],
-      email: map['email'],
-      firstName: map['firstName'],
-      secondName: map['secondName'],
-    );
   }
 
   Map<String, dynamic> toMap() {

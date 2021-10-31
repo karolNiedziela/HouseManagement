@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/invitation.dart';
+import 'package:housemanagement/services/user_service.dart';
 
 class InvitationTile extends StatelessWidget {
   final Invitation invitation;
+  final userService = UserService();
 
-  const InvitationTile({Key? key, required this.invitation}) : super(key: key);
+  InvitationTile({Key? key, required this.invitation}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +20,16 @@ class InvitationTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.changeFriendRequestStatus(
+                    invitation.senderUId, InvitationStatus.accepted);
+              },
               icon: Icon(Icons.check, color: Colors.indigo[900], size: 25.0)),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.changeFriendRequestStatus(
+                    invitation.senderUId, InvitationStatus.rejected);
+              },
               icon: Icon(
                 Icons.close,
                 color: Colors.indigo[900],

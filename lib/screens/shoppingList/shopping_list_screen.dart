@@ -13,7 +13,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Expanded(
+        const Expanded(
           flex: 2,
           child: Center(child: Text('data')),
         ),
@@ -21,11 +21,11 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           flex: 13,
           child: GridView.builder(
               itemCount: 4,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   childAspectRatio: 18.0 / 10.0, crossAxisCount: 2),
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     child: Card(
                         color: Colors.blueAccent[100],
                         semanticContainer: true,
@@ -36,7 +36,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
+                            children: const <Widget>[
                               Text('Sklep spożywczy',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               children: [
                 FloatingActionButton(
                   onPressed: () {},
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                   backgroundColor: Colors.blueAccent[200],
                 ),
               ],
