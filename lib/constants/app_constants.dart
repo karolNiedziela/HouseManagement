@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/widgets/submit_button_widget.dart';
+import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 
 InputDecoration getInputDecoration(IconData prefixIcon, String hintText) =>
     InputDecoration(

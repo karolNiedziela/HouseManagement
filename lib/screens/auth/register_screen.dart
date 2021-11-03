@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/constants/app_constants.dart';
 import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/utils/error_snackbar.dart';
 import 'package:housemanagement/utils/loading.dart';
-import 'package:housemanagement/widgets/email_text_form_field_widget.dart';
-import 'package:housemanagement/widgets/name_text_form_field_widget.dart';
-import 'package:housemanagement/widgets/password_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/email_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/password_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/start_title_widget.dart';
-import 'package:housemanagement/widgets/submit_button_widget.dart';
+import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function toggleView;
@@ -56,19 +57,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           if (mounted) {
-            (() {
+            setState(() {
               loading = true;
             });
           }
           dynamic result = await _authService.registerWithEmailAndPassword(
               emailEditingController.text,
               passwordEditingController.text,
+              confirmPasswordEditingController.text,
               firstNameEditingController.text,
               secondNameEditingController.text);
-          if (mounted && result == null) {
+          if (mounted) {
             setState(() {
               loading = false;
             });
+          }
+
+          if (result != null) {
+            ErrorSnackBar.showError(context, result.toString());
           }
         }
       },

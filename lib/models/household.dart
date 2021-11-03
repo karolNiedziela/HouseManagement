@@ -1,15 +1,23 @@
-class Household {
-  List<String> users = <String>[];
-  String ownerUId;
+import 'package:housemanagement/models/household_app_user.dart';
 
-  Household({required this.users, required this.ownerUId});
+class Household {
+  List<HouseholdAppUser> users = <HouseholdAppUser>[];
+  List<String> uIds = <String>[];
+
+  Household({required this.users, required this.uIds});
 
   factory Household.fromMap(Map<String, dynamic> map) {
     return Household(
-        users: List<String>.from(map['users']), ownerUId: map['ownerUId']);
+        users: (map['users'] as List)
+            .map((data) => HouseholdAppUser.fromMap(data))
+            .toList(),
+        uIds: List.from(map['uIds']));
   }
 
   Map<String, dynamic> toMap() {
-    return {'users': users.map((user) => user).toList(), 'ownerUId': ownerUId};
+    return {
+      'users': users.map((user) => user.toMap()).toList(),
+      'uIds': uIds.map((uId) => uId).toList()
+    };
   }
 }

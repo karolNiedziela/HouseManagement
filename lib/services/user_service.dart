@@ -74,6 +74,22 @@ class UserService {
     var receiver = await getByEmail(receiverEmail);
     var currentAppUserUId = _authService.uid!;
     var sender = await getByUId(currentAppUserUId);
+
+    if (await _householdService.isAlreadyInHousehold(_authService.uid!)) {
+      return "${sender.firstName} ${sender.secondName} is already in household.";
+    }
+
+    if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
+      return "${receiver.firstName} ${receiver.secondName} is already in household.";
+    }
+
+    var invitations = await getUserFriendRequests();
+    if (invitations.any((invitation) =>
+        invitation.receiverUId == receiver.uid ||
+        invitation.senderUId == receiver.uid)) {
+      return "You already sent an invitation";
+    }
+
     var fullname = "${sender.firstName} ${sender.secondName}";
 
     var invitation = Invitation(
@@ -92,6 +108,37 @@ class UserService {
         .collection('invitations')
         .doc()
         .set(invitation.toMap());
+  }
+
+  Future<bool> canSendFriendRequest(String receiverEmail) async {
+    var receiver = await getByEmail(receiverEmail);
+
+    if (await _householdService.isAlreadyInHousehold(_authService.uid!)) {
+      // return "${sender.firstName} ${sender.secondName} is already in household.";
+      return false;
+    }
+
+    if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
+      return false;
+    }
+
+    var querySnapshots = await Future.wait([
+      userCollection
+          .doc(_authService.uid)
+          .collection('invitations')
+          .where('receiverUId', isEqualTo: _authService.uid)
+          .get(),
+      userCollection
+          .doc(_authService.uid)
+          .collection('invitations')
+          .where('receiverUId', isEqualTo: receiver.uid)
+          .get()
+    ]);
+
+    if (querySnapshots[0].size != 0 || querySnapshots[1].size != 0) {
+      return false;
+    }
+    return true;
   }
 
   Future changeFriendRequestStatus(
@@ -123,8 +170,12 @@ class UserService {
     }
 
     if (status == InvitationStatus.accepted) {
-      await _householdService
-          .createHousehold([senderUId, _authService.uid!], senderUId);
+      var receiver = await getByUId(_authService.uid);
+      var sender = await getByUId(senderUId);
+      await _householdService.isAlreadyInHousehold(senderUId)
+          ? await _householdService.addToHousehold(receiver, senderUId)
+          : await _householdService
+              .createHousehold([sender, receiver], senderUId);
     }
   }
 }

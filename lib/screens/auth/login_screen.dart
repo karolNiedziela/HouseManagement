@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/constants/app_constants.dart';
 import 'package:housemanagement/services/auth_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:housemanagement/utils/error_snackbar.dart';
 import 'package:housemanagement/utils/loading.dart';
-import 'package:housemanagement/widgets/email_text_form_field_widget.dart';
-import 'package:housemanagement/widgets/password_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/email_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/password_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/start_title_widget.dart';
-import 'package:housemanagement/widgets/submit_button_widget.dart';
+import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function toggleView;
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
         EmailTextFormFieldWidget(controller: emailEditingController);
 
     // password field
-    final passwordField =
+    var passwordField =
         PasswordTextFormFieldWidget(controller: passwordEditingController);
 
     final loginButton = getSubmitButton(SubmitButtonWidget(
@@ -49,14 +49,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
           dynamic result = await _authService.signIn(
               emailEditingController.text, passwordEditingController.text);
-          if (mounted && result == null) {
+          if (mounted) {
             setState(() {
               loading = false;
             });
           }
 
-          Fluttertoast.showToast(
-              msg: "Login successfully", gravity: ToastGravity.CENTER);
+          if (result != null) {
+            ErrorSnackBar.showError(context, result.toString());
+          }
         }
       },
       displayButtonText: 'Login',
