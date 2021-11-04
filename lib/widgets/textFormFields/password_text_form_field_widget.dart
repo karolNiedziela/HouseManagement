@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 
 class PasswordTextFormFieldWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -25,12 +25,12 @@ class _PasswordTextFormFieldWidgetState
           controller: widget.controller,
           validator: (value) {
             if (value!.isEmpty) {
-              return ('Please enter password');
+              return ('Wprowadź hasło.');
             }
 
             RegExp regex = RegExp(r'^.{6,}$');
             if (!regex.hasMatch(value)) {
-              return ("Please enter a valid password (min. 6 characters)");
+              return ("Wprowadź poprawne hasło(min. 6 znaków).");
             }
 
             return null;

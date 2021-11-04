@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
 import 'package:housemanagement/utils/loading.dart';
@@ -34,11 +34,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     //first name field
     final firstNameField = NameTextFormFieldWidget(
-        controller: firstNameEditingController, hintText: 'First name');
+        controller: firstNameEditingController, hintText: 'Imię');
 
     //second name field
     final secondNameField = NameTextFormFieldWidget(
-        controller: secondNameEditingController, hintText: 'Second name');
+        controller: secondNameEditingController, hintText: 'Nazwisko');
 
     // email field
     final emailField =
@@ -51,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // confirm password field
     final confirmPasswordField = PasswordTextFormFieldWidget(
         controller: confirmPasswordEditingController,
-        hintText: 'Confirm password');
+        hintText: 'Powtórz hasło');
 
     final registerButton = getSubmitButton(SubmitButtonWidget(
       onPressed: () async {
@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         }
       },
-      displayButtonText: 'Register',
+      displayButtonText: 'Zarejestruj się',
     ));
 
     return loading

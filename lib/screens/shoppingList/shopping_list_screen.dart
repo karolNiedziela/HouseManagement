@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:housemanagement/constants/app_constants.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_list.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
@@ -21,7 +21,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   final shoppingListNameEditingController = TextEditingController();
   final now = DateTime.now();
   late DateTime startDate = DateTime(now.year, now.month, 1);
-  late DateTime endDate = DateTime(now.year, now.month + 1, 0);
+  late DateTime endDate = DateTime(now.year, now.month, now.day);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     final _formKey = GlobalKey<FormState>();
     final shoppingListNameField = NameTextFormFieldWidget(
         controller: shoppingListNameEditingController,
-        hintText: 'Name',
+        hintText: 'Nazwa',
         iconData: Icons.list);
 
     final addButton = getSubmitButton(SubmitButtonWidget(
@@ -42,7 +42,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           Navigator.pop(context);
         }
       },
-      displayButtonText: 'Add',
+      displayButtonText: 'Dodaj',
     ));
 
     return Column(
@@ -81,7 +81,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Text('Choose date:',
+                        const Text('Wybierz zakres:',
                             style:
                                 TextStyle(color: Colors.black, fontSize: 17)),
                         Row(
@@ -118,13 +118,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                   onPressed: () {
                     FormDialog.showFormDialog(
                         context: context,
-                        formContent: [
-                          shoppingListNameField,
-                          const SizedBox(height: 10),
-                          addButton
-                        ],
+                        formContent: [shoppingListNameField, addButton],
                         key: _formKey,
-                        dialogHeader: 'Shopping list');
+                        dialogHeader: 'Lista zakupów');
                   },
                   child: const Icon(Icons.add),
                   backgroundColor: Colors.blueAccent[200],

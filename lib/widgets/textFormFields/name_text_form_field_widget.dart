@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 
 class NameTextFormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -23,7 +23,7 @@ class NameTextFormFieldWidget extends StatelessWidget {
           keyboardType: TextInputType.name,
           validator: (value) {
             if (value!.isEmpty) {
-              return "Please enter ${hintText.toLowerCase()}";
+              return "Wprowadź ${hintText.toLowerCase()}.";
             }
 
             return null;

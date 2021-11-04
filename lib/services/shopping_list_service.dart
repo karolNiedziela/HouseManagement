@@ -66,4 +66,22 @@ class ShoppingListService {
       'products': FieldValue.arrayUnion([product.toMap()]),
     });
   }
+
+  Future buyProduct(String documentId, String name, double price) async {
+    var shoppingList = ShoppingList.fromMapWithProducts(
+        (await shoppingListCollection.doc(documentId).get()).data()!);
+
+    shoppingList.products.map((product) {
+      if (product.name == name) {
+        product.isBought = true;
+        product.price = price;
+      }
+      return product;
+    }).toList();
+
+    await shoppingListCollection.doc(documentId).update({
+      'products':
+          shoppingList.products.map((product) => product.toMap()).toList()
+    });
+  }
 }

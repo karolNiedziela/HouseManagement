@@ -25,9 +25,9 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       String errorMessage = '';
       if (e.code == 'user-not-found') {
-        errorMessage = 'Invalid credentials.';
+        errorMessage = 'Niepoprawne dane.';
       } else if (e.code == 'wrong-password') {
-        errorMessage = 'Invalid credentials.';
+        errorMessage = 'Niepoprawne dane.';
       }
 
       return errorMessage;
@@ -37,7 +37,7 @@ class AuthService {
   Future registerWithEmailAndPassword(String email, String password,
       String confirmPassword, String firstName, String secondName) async {
     if (password != confirmPassword) {
-      return 'Password and confirm password are different.';
+      return 'Hasła różnią się.';
     }
 
     try {
@@ -59,7 +59,7 @@ class AuthService {
       String errorMessage = '';
       switch (e.code) {
         case "email-already-in-use":
-          errorMessage = "Email is already taken.";
+          errorMessage = "Adres email jest zajęty.";
           break;
         default:
           errorMessage = "Error occured.";

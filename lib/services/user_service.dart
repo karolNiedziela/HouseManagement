@@ -76,18 +76,18 @@ class UserService {
     var sender = await getByUId(currentAppUserUId);
 
     if (await _householdService.isAlreadyInHousehold(_authService.uid!)) {
-      return "${sender.firstName} ${sender.secondName} is already in household.";
+      return "${sender.firstName} ${sender.secondName} jest już w grupie domowej.";
     }
 
     if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
-      return "${receiver.firstName} ${receiver.secondName} is already in household.";
+      return "${receiver.firstName} ${receiver.secondName} jest już w grupie domowej.";
     }
 
     var invitations = await getUserFriendRequests();
     if (invitations.any((invitation) =>
         invitation.receiverUId == receiver.uid ||
         invitation.senderUId == receiver.uid)) {
-      return "You already sent an invitation";
+      return "Już wysłałeś zaproszenie.";
     }
 
     var fullname = "${sender.firstName} ${sender.secondName}";
@@ -99,12 +99,6 @@ class UserService {
 
     await userCollection
         .doc(receiver.uid)
-        .collection('invitations')
-        .doc()
-        .set(invitation.toMap());
-
-    await userCollection
-        .doc(currentAppUserUId)
         .collection('invitations')
         .doc()
         .set(invitation.toMap());
@@ -122,20 +116,35 @@ class UserService {
       return false;
     }
 
+    var currentUserUId = _authService.uid;
+
     var querySnapshots = await Future.wait([
       userCollection
-          .doc(_authService.uid)
+          .doc(receiver.uid)
           .collection('invitations')
-          .where('receiverUId', isEqualTo: _authService.uid)
+          .where('receiverUId', isEqualTo: currentUserUId)
           .get(),
       userCollection
-          .doc(_authService.uid)
+          .doc(receiver.uid)
+          .collection('invitations')
+          .where('receiverUId', isEqualTo: receiver.uid)
+          .get(),
+      userCollection
+          .doc(currentUserUId)
+          .collection('invitations')
+          .where('receiverUId', isEqualTo: currentUserUId)
+          .get(),
+      userCollection
+          .doc(currentUserUId)
           .collection('invitations')
           .where('receiverUId', isEqualTo: receiver.uid)
           .get()
     ]);
 
-    if (querySnapshots[0].size != 0 || querySnapshots[1].size != 0) {
+    if (querySnapshots[0].size != 0 ||
+        querySnapshots[1].size != 0 ||
+        querySnapshots[2].size != 0 ||
+        querySnapshots[3].size != 0) {
       return false;
     }
     return true;
@@ -150,23 +159,10 @@ class UserService {
         .where('receiverUId', isEqualTo: _authService.uid)
         .get();
 
-    var receiverInvitation = await userCollection
-        .doc(senderUId)
-        .collection('invitations')
-        .where('senderUId', isEqualTo: senderUId)
-        .where('receiverUId', isEqualTo: _authService.uid)
-        .get();
-
     if (senderInvitation.docs.isNotEmpty) {
       var invitation = Invitation.fromMap(senderInvitation.docs[0].data());
       invitation.invitationStatus = status;
       senderInvitation.docs[0].reference.update(invitation.toMap());
-    }
-
-    if (receiverInvitation.docs.isNotEmpty) {
-      var invitation = Invitation.fromMap(receiverInvitation.docs[0].data());
-      invitation.invitationStatus = status;
-      receiverInvitation.docs[0].reference.update(invitation.toMap());
     }
 
     if (status == InvitationStatus.accepted) {

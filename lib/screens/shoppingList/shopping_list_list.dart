@@ -16,7 +16,7 @@ class _ShoppingListListState extends State<ShoppingListList> {
     final shoppingLists = Provider.of<List<ShoppingList>>(context);
 
     return GridView.builder(
-      itemCount: shoppingLists.length > 0 ? shoppingLists.length : 0,
+      itemCount: shoppingLists.isNotEmpty ? shoppingLists.length : 0,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: 22.0 / 10.0, crossAxisCount: 2),
       itemBuilder: ((context, index) {

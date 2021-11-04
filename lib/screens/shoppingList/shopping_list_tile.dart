@@ -34,7 +34,8 @@ class ShoppingListTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Text("0 / ${shoppingList.products.length.toString()}")
+                    Text(
+                        "${shoppingList.products.where((product) => product.isBought).toList().length} / ${shoppingList.products.length.toString()}")
                   ],
                 )
               ],

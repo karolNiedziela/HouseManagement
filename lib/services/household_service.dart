@@ -61,4 +61,27 @@ class HouseholdService {
       'uIds': FieldValue.arrayUnion([user.uid])
     });
   }
+
+  Future removeFromHouseHold(
+      String currentUserUId, String userUIdToRemove) async {
+    var querySnapshot = await householdCollection
+        .where('uIds', arrayContains: currentUserUId)
+        .get();
+
+    var documentId = querySnapshot.docs[0].reference.id;
+
+    if ((querySnapshot.docs[0].get('users') as List).length == 2) {
+      await householdCollection.doc(documentId).delete();
+      return;
+    }
+
+    Map<String, dynamic> userToRemove =
+        (querySnapshot.docs[0].get('users') as List)
+            .firstWhere((element) => element['uid'] == userUIdToRemove);
+
+    await householdCollection.doc(documentId).update({
+      'uIds': FieldValue.arrayRemove([userUIdToRemove]),
+      'users': FieldValue.arrayRemove([userToRemove])
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
 import 'package:housemanagement/utils/loading.dart';
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
       },
-      displayButtonText: 'Login',
+      displayButtonText: 'Zaloguj się',
     ));
 
     return loading
@@ -85,13 +85,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              const Text("Don't have an account? ",
+                              const Text("Nie masz konta? ",
                                   style: TextStyle(fontSize: 17)),
                               GestureDetector(
                                 onTap: () {
                                   widget.toggleView();
                                 },
-                                child: const Text("Register",
+                                child: const Text("Zarejestruj się",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 17.0,
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
                               Text(
-                                'Forgot password?',
+                                'Zapomniałeś hasła?',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 17.0,

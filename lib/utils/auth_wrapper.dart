@@ -18,7 +18,7 @@ class AuthWrapper extends StatelessWidget {
 
     return const MainScaffoldWidget(
       body: ShoppingListScreen(),
-      appBarTitle: 'Shopping list',
+      appBarTitle: 'Listy zakupów',
     );
   }
 }

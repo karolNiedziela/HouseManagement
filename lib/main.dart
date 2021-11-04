@@ -27,24 +27,24 @@ class MyApp extends StatelessWidget {
         value: AuthService().appUser,
         initialData: null,
         child: MaterialApp(
-            localizationsDelegates: [
+            localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate
             ],
-            supportedLocales: [
-              const Locale('en', 'EN'),
+            supportedLocales: const [
+              Locale('pl', 'PL'),
             ],
             routes: {
               '/household': (context) => const MainScaffoldWidget(
                     body: HouseHouldScreen(),
-                    appBarTitle: 'Household',
+                    appBarTitle: 'Grupa domowa',
                   ),
               '/invitations': (context) => const MainScaffoldWidget(
                     body: InvitationScreen(),
-                    appBarTitle: 'Invitations',
+                    appBarTitle: 'Zaproszenia',
                   ),
               '/shoppinglist': (context) => const MainScaffoldWidget(
                     body: ShoppingListScreen(),
-                    appBarTitle: 'Shopping list',
+                    appBarTitle: 'Listy zakupów',
                   ),
               '/shoppinglistdetails': (context) =>
                   const ShoppingListDetailsScreen()

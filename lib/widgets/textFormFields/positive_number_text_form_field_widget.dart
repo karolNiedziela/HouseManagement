@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 
 class PositiveNumberTextFormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -22,11 +22,11 @@ class PositiveNumberTextFormFieldWidget extends StatelessWidget {
           keyboardType: TextInputType.number,
           validator: (value) {
             if (value!.isEmpty) {
-              return "Please enter ${hintText.toLowerCase()}";
+              return "Wprowadź ${hintText.toLowerCase()}.";
             }
 
             if (int.parse(value) <= 0) {
-              return "Please enter positive number";
+              return "Wprowadź dodatnią liczbę.";
             }
 
             return null;

@@ -55,7 +55,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     const SizedBox(height: 15),
                     ListTile(
-                      title: const Text('Household',
+                      title: const Text('Grupa domowa',
                           style: TextStyle(color: Colors.indigo, fontSize: 17)),
                       leading:
                           const Icon(Icons.person_sharp, color: Colors.indigo),
@@ -65,7 +65,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       },
                     ),
                     ListTile(
-                      title: const Text('Shopping list',
+                      title: const Text('Listy zakupów',
                           style: TextStyle(color: Colors.indigo, fontSize: 17)),
                       leading:
                           const Icon(Icons.shopping_cart, color: Colors.indigo),
@@ -75,7 +75,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       },
                     ),
                     ListTile(
-                      title: const Text('Invitations',
+                      title: const Text('Zaproszenia',
                           style: TextStyle(color: Colors.indigo, fontSize: 17)),
                       leading: const Icon(Icons.insert_invitation,
                           color: Colors.indigo),
@@ -107,7 +107,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   children: <Widget>[
                     const ListTile(
                       leading: Icon(Icons.settings, color: Colors.indigo),
-                      title: Text('Settings',
+                      title: Text('Ustawienia',
                           style: TextStyle(color: Colors.indigo, fontSize: 15)),
                     ),
                     ListTile(
@@ -122,7 +122,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             MaterialPageRoute(
                                 builder: (context) => const AuthWrapper()));
                       },
-                      title: const Text('Sign out',
+                      title: const Text('Wyloguj się',
                           style: TextStyle(color: Colors.indigo, fontSize: 15)),
                     )
                   ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 
 class EmailTextFormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -17,13 +17,13 @@ class EmailTextFormFieldWidget extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value!.isEmpty) {
-              return ('Please enter email');
+              return ('Wprowadź adres email.');
             }
 
             // reg expression for email
             if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
                 .hasMatch(value)) {
-              return ("Please enter a valid email");
+              return ("Wprowadź poprawny adres email.");
             }
             return null;
           },

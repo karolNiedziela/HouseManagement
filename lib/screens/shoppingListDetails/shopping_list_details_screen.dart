@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/constants/app_constants.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/models/product.dart';
 import 'package:housemanagement/screens/shoppingListDetails/shopping_list_details_tile.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
@@ -28,14 +28,14 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
 
     final ShoppingListService _shoppingListService = ShoppingListService();
-    bool isBought = false;
+
     final nameField = NameTextFormFieldWidget(
         controller: nameEditingController,
-        hintText: 'Name',
+        hintText: 'Nazwa',
         iconData: Icons.shopping_bag);
 
     final quantityField = PositiveNumberTextFormFieldWidget(
-        controller: quantityEditingController, hintText: 'Quantity');
+        controller: quantityEditingController, hintText: 'Ilość');
 
     final addButton = getSubmitButton(SubmitButtonWidget(
       onPressed: () async {
@@ -48,18 +48,25 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
           Navigator.pop(context);
         }
       },
-      displayButtonText: 'Add',
+      displayButtonText: 'Dodaj',
     ));
 
     return Scaffold(
       appBar: AppBar(
         title: Text(arguments['name']),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                FormDialog.showConfirmDeleteDialog(context: context);
+              },
+              icon: const Icon(Icons.delete))
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            flex: 10,
+            flex: 13,
             child: StreamBuilder(
               stream: ShoppingListService().getProducts(arguments['docId']),
               builder: (context, AsyncSnapshot<List<Product>> snapshot) {
@@ -71,11 +78,12 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return ShoppingListDetailsTile(
-                              product: snapshot.data![index]);
+                              product: snapshot.data![index],
+                              docId: arguments['docId']);
                         });
                   }
 
-                  return Text('no data');
+                  return const Text('no data');
                 }
               },
             ),
@@ -97,7 +105,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                                 addButton
                               ],
                               key: _formKey,
-                              dialogHeader: 'Product');
+                              dialogHeader: 'Produkt');
                         },
                         child: const Icon(Icons.add),
                         backgroundColor: Colors.blueAccent[200],
