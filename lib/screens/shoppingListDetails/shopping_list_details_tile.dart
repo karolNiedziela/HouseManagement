@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/product.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
+import 'package:housemanagement/shared/shared_styles.dart';
+import 'package:housemanagement/utils/form_dialog.dart';
+import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/positive_number_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/trailing_popup_menu_widget.dart';
 
 class ShoppingListDetailsTile extends StatefulWidget {
@@ -18,11 +22,26 @@ class ShoppingListDetailsTile extends StatefulWidget {
 
 class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
   final ShoppingListService _shoppingListService = ShoppingListService();
+  final _setPriceFormKey = GlobalKey<FormState>();
+  final priceTextEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final priceField = PositiveNumberTextFormFieldWidget(
+        controller: priceTextEditingController, hintText: 'Cena');
+
+    final submitButton = getSubmitButton(SubmitButtonWidget(
+        onPressed: () async {
+          await _shoppingListService.setPriceOfProduct(
+              widget.docId,
+              widget.product.name,
+              double.parse(priceTextEditingController.text));
+          Navigator.of(context).pop();
+        },
+        displayButtonText: 'Dodaj'));
+
     return Card(
-        color: widget.product.isBought ? Colors.grey[400] : null,
+        color: widget.product.isBought ? Colors.blueGrey[200] : null,
         child: ListTile(
           dense: true,
           title: Row(
@@ -40,19 +59,37 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
               ),
             ],
           ),
-          subtitle: widget.product.isBought
+          subtitle: widget.product.isBought && widget.product.price != null
               ? Text(
-                  "Cena: ${widget.product.price! * widget.product.quantity}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black),
+                  "Zapłacano: ${widget.product.price != null ? widget.product.price! * widget.product.quantity : ''}zł",
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
                 )
               : null,
-          trailing: const TrailingPopupMenuWidget(),
+          trailing: widget.product.isBought
+              ? TrailingPopupMenuWidget(
+                  deleteAction: () async {
+                    await _shoppingListService.deleteProduct(
+                        widget.docId, widget.product);
+                  },
+                  additionalPopupMenuItems: [
+                    AdditionalPopupMenuItem(
+                        onTap: () {
+                          FormDialog.showFormDialog(
+                              context: context,
+                              formContent: [priceField, submitButton],
+                              key: _setPriceFormKey,
+                              dialogHeader: 'Podaj cenę');
+                        },
+                        text: 'Ustaw cenę')
+                  ],
+                )
+              : TrailingPopupMenuWidget(deleteAction: () async {
+                  await _shoppingListService.deleteProduct(
+                      widget.docId, widget.product);
+                }),
           onTap: () async {
             await _shoppingListService.buyProduct(
-                widget.docId, widget.product.name, 10);
+                widget.docId, widget.product.name);
           },
         ));
   }

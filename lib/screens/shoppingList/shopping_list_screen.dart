@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_list.dart';
+import 'package:housemanagement/services/household_service.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
+import 'package:housemanagement/utils/loading_element.dart';
 import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:provider/provider.dart';
@@ -101,10 +103,28 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         ),
         Expanded(
           flex: 10,
-          child: StreamProvider<List<ShoppingList>>.value(
-            initialData: const [],
-            value: ShoppingListService().shoppingLists,
-            child: const ShoppingListList(),
+          child: FutureBuilder(
+            future: HouseholdService().getUserIds(),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const LoadingElement();
+              }
+
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return StreamProvider<List<ShoppingList>>.value(
+                      initialData: const [],
+                      value: ShoppingListService().getShoppingLists(
+                          snapshot.data!,
+                          getStringShortDate(startDate),
+                          getStringShortDate(endDate)),
+                      child: const ShoppingListList());
+                }
+              }
+
+              return const Text('');
+            },
           ),
         ),
         Expanded(
@@ -116,6 +136,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               children: [
                 FloatingActionButton(
                   onPressed: () {
+                    shoppingListNameField.controller.clear();
                     FormDialog.showFormDialog(
                         context: context,
                         formContent: [shoppingListNameField, addButton],
@@ -139,5 +160,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       style: const TextStyle(
           color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
     );
+  }
+
+  String getStringShortDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
   }
 }

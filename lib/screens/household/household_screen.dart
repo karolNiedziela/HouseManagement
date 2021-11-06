@@ -53,10 +53,11 @@ class _HouseHouldScreenState extends State<HouseHouldScreen> {
                                     snapshot.data!.users[index].isOwner == false
                                 ? TrailingPopupMenuWidget(
                                     deleteAction: () async {
-                                    await _householdService.removeFromHouseHold(
-                                        currentUserUId!,
-                                        snapshot.data!.users[index].uid);
-                                  })
+                                      await _householdService
+                                          .removeFromHouseHold(currentUserUId!,
+                                              snapshot.data!.users[index].uid);
+                                    },
+                                    isEditVisible: false)
                                 : null),
                       );
                     }),

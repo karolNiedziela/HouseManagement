@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/models/household.dart';
 import 'package:housemanagement/models/household_app_user.dart';
+import 'package:housemanagement/services/auth_service.dart';
 
 class HouseholdService {
   final householdCollection =
@@ -16,6 +17,19 @@ class HouseholdService {
         Household.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
 
     return household;
+  }
+
+  Future<List<String>> getUserIds() async {
+    var querySnapshot = await householdCollection
+        .where('uIds', arrayContains: AuthService().uid)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isEmpty) {
+      return <String>[AuthService().uid!];
+    } else {
+      return Household.fromMap(querySnapshot.docs[0].data()).uIds;
+    }
   }
 
   Future<bool> isAlreadyInHousehold(String senderUId) async =>

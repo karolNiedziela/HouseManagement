@@ -18,7 +18,7 @@ class _ShoppingListListState extends State<ShoppingListList> {
     return GridView.builder(
       itemCount: shoppingLists.isNotEmpty ? shoppingLists.length : 0,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: 22.0 / 10.0, crossAxisCount: 2),
+          childAspectRatio: 20.0 / 10.0, crossAxisCount: 2),
       itemBuilder: ((context, index) {
         return ShoppingListTile(shoppingList: shoppingLists[index]);
       }),

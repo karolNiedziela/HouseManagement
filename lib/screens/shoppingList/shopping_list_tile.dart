@@ -26,10 +26,13 @@ class ShoppingListTile extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(shoppingList.name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 17.0)),
+                Center(
+                  child: Text(shoppingList.name,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 17.0)),
+                ),
                 Text(shoppingList.userFullName),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

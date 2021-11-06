@@ -11,9 +11,12 @@ class ShoppingListService {
   final AuthService _authService = AuthService();
   final UserService _userService = UserService();
 
-  Stream<List<ShoppingList>> get shoppingLists {
+  Stream<List<ShoppingList>> getShoppingLists(
+      List<String> userIds, String startDate, String endDate) {
     return shoppingListCollection
-        .where('userUId', isEqualTo: _authService.uid)
+        .where('userUId', whereIn: userIds)
+        .where('dateCreated', isGreaterThanOrEqualTo: startDate)
+        .where('dateCreated', isLessThanOrEqualTo: endDate)
         .snapshots()
         .map(_shoppingListFromSnapshot);
   }
@@ -67,14 +70,13 @@ class ShoppingListService {
     });
   }
 
-  Future buyProduct(String documentId, String name, double price) async {
+  Future buyProduct(String documentId, String name) async {
     var shoppingList = ShoppingList.fromMapWithProducts(
         (await shoppingListCollection.doc(documentId).get()).data()!);
 
     shoppingList.products.map((product) {
       if (product.name == name) {
         product.isBought = true;
-        product.price = price;
       }
       return product;
     }).toList();
@@ -82,6 +84,33 @@ class ShoppingListService {
     await shoppingListCollection.doc(documentId).update({
       'products':
           shoppingList.products.map((product) => product.toMap()).toList()
+    });
+  }
+
+  Future setPriceOfProduct(
+      String documentId, String productName, double price) async {
+    var shoppingList = ShoppingList.fromMapWithProducts(
+        (await shoppingListCollection.doc(documentId).get()).data()!);
+
+    shoppingList.products.map((product) {
+      if (product.name == productName) {
+        product.price = price;
+      }
+    }).toList();
+
+    await shoppingListCollection.doc(documentId).update({
+      'products':
+          shoppingList.products.map((product) => product.toMap()).toList()
+    });
+  }
+
+  Future deleteShoppingList(String documentId) async {
+    await shoppingListCollection.doc(documentId).delete();
+  }
+
+  Future deleteProduct(String documentId, Product product) async {
+    await shoppingListCollection.doc(documentId).update({
+      'products': FieldValue.arrayRemove([product.toMap()]),
     });
   }
 }

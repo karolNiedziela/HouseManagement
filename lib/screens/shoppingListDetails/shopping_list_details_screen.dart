@@ -44,7 +44,6 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
               arguments['docId'],
               nameEditingController.text,
               int.parse(quantityEditingController.text));
-
           Navigator.pop(context);
         }
       },
@@ -58,7 +57,14 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                FormDialog.showConfirmDeleteDialog(context: context);
+                FormDialog.showConfirmDeleteDialog(
+                    context: context,
+                    onYesPressed: () async {
+                      await _shoppingListService
+                          .deleteShoppingList(arguments['docId']);
+
+                      Navigator.of(context).pop();
+                    });
               },
               icon: const Icon(Icons.delete))
         ],
@@ -97,6 +103,8 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                     children: <Widget>[
                       FloatingActionButton(
                         onPressed: () async {
+                          nameField.controller.clear();
+                          quantityEditingController.text = "1";
                           FormDialog.showFormDialog(
                               context: context,
                               formContent: [
@@ -106,6 +114,8 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                               ],
                               key: _formKey,
                               dialogHeader: 'Produkt');
+
+                          setState(() {});
                         },
                         child: const Icon(Icons.add),
                         backgroundColor: Colors.blueAccent[200],
