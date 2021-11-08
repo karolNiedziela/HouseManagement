@@ -75,21 +75,6 @@ class UserService {
     var currentAppUserUId = _authService.uid!;
     var sender = await getByUId(currentAppUserUId);
 
-    if (await _householdService.isAlreadyInHousehold(_authService.uid!)) {
-      return "${sender.firstName} ${sender.secondName} jest już w grupie domowej.";
-    }
-
-    if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
-      return "${receiver.firstName} ${receiver.secondName} jest już w grupie domowej.";
-    }
-
-    var invitations = await getUserFriendRequests();
-    if (invitations.any((invitation) =>
-        invitation.receiverUId == receiver.uid ||
-        invitation.senderUId == receiver.uid)) {
-      return "Już wysłałeś zaproszenie.";
-    }
-
     var fullname = "${sender.firstName} ${sender.secondName}";
 
     var invitation = Invitation(
@@ -107,11 +92,6 @@ class UserService {
   Future<bool> canSendFriendRequest(String receiverEmail) async {
     var receiver = await getByEmail(receiverEmail);
 
-    if (await _householdService.isAlreadyInHousehold(_authService.uid!)) {
-      // return "${sender.firstName} ${sender.secondName} is already in household.";
-      return false;
-    }
-
     if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
       return false;
     }
@@ -122,7 +102,7 @@ class UserService {
       userCollection
           .doc(receiver.uid)
           .collection('invitations')
-          .where('receiverUId', isEqualTo: currentUserUId)
+          .where('senderUId', isEqualTo: currentUserUId)
           .get(),
       userCollection
           .doc(receiver.uid)
@@ -132,7 +112,7 @@ class UserService {
       userCollection
           .doc(currentUserUId)
           .collection('invitations')
-          .where('receiverUId', isEqualTo: currentUserUId)
+          .where('senderUId', isEqualTo: currentUserUId)
           .get(),
       userCollection
           .doc(currentUserUId)
