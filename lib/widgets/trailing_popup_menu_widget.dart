@@ -33,9 +33,9 @@ class _TrailingPopupMenuWidgetState extends State<TrailingPopupMenuWidget> {
     if (widget.isEditVisible) {
       defaultPopupMenuItems.add(PopupMenuItem(
           child: const Text('Edytuj'),
-          onTap: () {
-            widget.editAction;
-          }));
+          onTap: () =>
+           widget.editAction
+          ));
     }
 
     defaultPopupMenuItems.add(PopupMenuItem(

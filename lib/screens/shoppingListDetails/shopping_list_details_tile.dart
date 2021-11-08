@@ -24,6 +24,7 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
   final ShoppingListService _shoppingListService = ShoppingListService();
   final _setPriceFormKey = GlobalKey<FormState>();
   final priceTextEditingController = TextEditingController();
+  final _editFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +68,9 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
               : null,
           trailing: widget.product.isBought
               ? TrailingPopupMenuWidget(
+                  editAction: () {
+                    FormDialog.showFormDialog(context: context, formContent: [], key: _editFormKey, dialogHeader: "Edytuj");
+                  },
                   deleteAction: () async {
                     await _shoppingListService.deleteProduct(
                         widget.docId, widget.product);

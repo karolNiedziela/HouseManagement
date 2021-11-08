@@ -43,11 +43,9 @@ class UserService {
 
   List<Invitation> _invitationListFromSnapshot(QuerySnapshot snapshot) {
     var invitations = snapshot.docs.map((doc) {
-      return Invitation(
-          receiverUId: doc.get('receiverUId') ?? '',
-          senderUId: doc.get('senderUId') ?? '',
-          senderFullName: doc.get('senderFullName') ?? '');
-    }).toList();
+      return Invitation.fromMap(doc.data() as Map<String, dynamic>);
+    }
+    ).toList();
 
     return invitations
         .where((invitation) => invitation.receiverUId == _authService.uid)
