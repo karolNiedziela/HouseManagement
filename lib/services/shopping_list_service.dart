@@ -23,14 +23,7 @@ class ShoppingListService {
 
   List<ShoppingList> _shoppingListFromSnapshot(QuerySnapshot snapshot) {
     var shoppingLists = snapshot.docs.map((doc) {
-      var shoppingList = ShoppingList(
-          name: doc.get('name') ?? '',
-          userUId: doc.get('userUId') ?? '',
-          userFullName: doc.get('userFullName') ?? '',
-          dateCreated: DateTime.parse(doc.get('dateCreated')));
-      shoppingList.products = (doc.get("products") as List)
-          .map((product) => Product.fromMap(product))
-          .toList();
+      var shoppingList = ShoppingList.fromMapWithProducts(doc.data() as Map<String, dynamic>);
       shoppingList.docId = doc.id;
       return shoppingList;
     }).toList();
@@ -58,7 +51,8 @@ class ShoppingListService {
         name: name,
         userUId: appUser.uid,
         userFullName: "${appUser.firstName} ${appUser.secondName}",
-        dateCreated: DateTime.now());
+        dateCreated: DateTime.now(),
+        isDone: false);
 
     await shoppingListCollection.doc().set(shoppingList.toMap());
   }
@@ -112,5 +106,9 @@ class ShoppingListService {
     await shoppingListCollection.doc(documentId).update({
       'products': FieldValue.arrayRemove([product.toMap()]),
     });
+  }
+
+  Future acceptShoppingList(String documentId) async {
+    await shoppingListCollection.doc(documentId).update({'isDone': true});
   }
 }

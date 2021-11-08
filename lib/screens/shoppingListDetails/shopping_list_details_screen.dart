@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/models/product.dart';
 import 'package:housemanagement/screens/shoppingListDetails/shopping_list_details_tile.dart';
@@ -25,7 +26,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final shoppingList = ModalRoute.of(context)!.settings.arguments as ShoppingList;
 
     final ShoppingListService _shoppingListService = ShoppingListService();
 
@@ -41,7 +42,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           await _shoppingListService.addProduct(
-              arguments['docId'],
+              shoppingList.docId!,
               nameEditingController.text,
               int.parse(quantityEditingController.text));
           Navigator.pop(context);
@@ -52,16 +53,26 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(arguments['name']),
+        title: Text(shoppingList.name),
         centerTitle: true,
         actions: [
+          Visibility(
+            visible: shoppingList.isDone == false,
+            child: IconButton(onPressed: () {
+              FormDialog.showConfirmDeleteDialog(context: context,
+              onYesPressed: () async  {
+                await _shoppingListService.acceptShoppingList(shoppingList.docId!);
+                Navigator.of(context).pop();
+              });
+            }, icon: const Icon(Icons.done)),
+          ),
           IconButton(
               onPressed: () {
                 FormDialog.showConfirmDeleteDialog(
                     context: context,
                     onYesPressed: () async {
                       await _shoppingListService
-                          .deleteShoppingList(arguments['docId']);
+                          .deleteShoppingList(shoppingList.docId!);
 
                       Navigator.of(context).pop();
                     });
@@ -74,7 +85,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
           Expanded(
             flex: 13,
             child: StreamBuilder(
-              stream: ShoppingListService().getProducts(arguments['docId']),
+              stream: ShoppingListService().getProducts(shoppingList.docId!),
               builder: (context, AsyncSnapshot<List<Product>> snapshot) {
                 if (snapshot.hasError) {
                   return const Text("error");
@@ -85,7 +96,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                         itemBuilder: (context, index) {
                           return ShoppingListDetailsTile(
                               product: snapshot.data![index],
-                              docId: arguments['docId']);
+                              docId: shoppingList.docId!);
                         });
                   }
 

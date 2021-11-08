@@ -11,10 +11,7 @@ class ShoppingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/shoppinglistdetails', arguments: {
-          'docId': shoppingList.docId,
-          'name': shoppingList.name
-        });
+        Navigator.pushNamed(context, '/shoppinglistdetails', arguments: shoppingList);
       },
       child: Card(
           color: Colors.blueAccent[100],
