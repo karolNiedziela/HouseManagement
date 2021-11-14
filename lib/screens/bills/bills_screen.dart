@@ -1,6 +1,6 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:housemanagement/dataSources/bill_data_source.dart';
 import 'package:housemanagement/models/bill.dart';
 import 'package:housemanagement/screens/bills/bills_list_tile.dart';
 import 'package:housemanagement/services/bills_service.dart';
@@ -10,9 +10,8 @@ import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:housemanagement/widgets/drawer_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/positive_number_text_form_field_widget.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BillsScreen extends StatefulWidget {
   const BillsScreen({Key? key}) : super(key: key);
@@ -23,10 +22,13 @@ class BillsScreen extends StatefulWidget {
 
 class _BillsScreenState extends State<BillsScreen> {
   final BillsService _billsService = BillsService();
-  bool isInitialLoaded = false;
-  List<Bill> _bills = <Bill>[];
-  BillDataSource? events;
   final _formKey = GlobalKey<FormState>();
+  final kToday = DateTime.now();
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  LinkedHashMap<DateTime, List<Bill>> _groupedBills =
+      LinkedHashMap<DateTime, List<Bill>>();
 
   final billNameEditingController = TextEditingController();
   final serviceProviderEditingController = TextEditingController();
@@ -35,37 +37,15 @@ class _BillsScreenState extends State<BillsScreen> {
 
   @override
   void initState() {
-    _billsService.getBills().then(
-        (bills) => SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-              setState(() {});
-            }));
-
-    FirebaseFirestore.instance.collection('bills').snapshots().listen((event) {
-      for (var element in event.docChanges) {
-        if (element.type == DocumentChangeType.added) {
-          print('added');
-
-          Bill bill = Bill.fromMap(element.doc.data()!);
-          setState(() {
-            events!.appointments!.add(bill);
-            events!.notifyListeners(CalendarDataSourceAction.add, [bill]);
-          });
-        } else if (element.type == DocumentChangeType.modified) {
-          Bill bill = Bill.fromMap(element.doc.data()!);
-
-          setState(() {
-            // int index = events!.appointments!.indexWhere((element) => bill.key == element.doc.id)
-            // TODO:
-          });
-        } else if (element.type == DocumentChangeType.removed) {}
-      }
-    });
     super.initState();
+
+    _selectedDay = _focusedDay;
   }
 
   @override
   Widget build(BuildContext context) {
-    isInitialLoaded = true;
+    final firstDay = DateTime(kToday.year, kToday.month - 3, 1);
+    final lastDay = DateTime(kToday.year, kToday.month + 3, 0);
 
     final billNameField = NameTextFormFieldWidget(
       controller: billNameEditingController,
@@ -103,10 +83,6 @@ class _BillsScreenState extends State<BillsScreen> {
                 double.parse(amountEditingController.text),
                 dateOfPaymentEditingController.text);
             Navigator.of(context).pop();
-
-            setState(() {
-              _bills.add(bill);
-            });
           }
         },
         displayButtonText: 'Dodaj'));
@@ -119,29 +95,59 @@ class _BillsScreenState extends State<BillsScreen> {
         resizeToAvoidBottomInset: false,
         drawer: const DrawerWidget(),
         body: StreamBuilder(
-            stream: _billsService.bills,
+            stream: _billsService.getAllBills(),
             builder: (context, AsyncSnapshot<List<Bill>> snapshot) {
               if (snapshot.hasData) {
+                final bills = snapshot.data;
+                _groupBills(bills!);
+                DateTime selectedDate = _selectedDay!;
+                final _selectedBills = _groupedBills[selectedDate] ?? [];
                 return Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 6,
-                      child: SfCalendar(
-                        view: CalendarView.month,
-                        showNavigationArrow: true,
-                        showDatePickerButton: true,
-                        dataSource: BillDataSource(snapshot.data!),
-                        monthCellBuilder: monthCellBuilder,
-                        monthViewSettings: const MonthViewSettings(
-                          appointmentDisplayMode:
-                              MonthAppointmentDisplayMode.none,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      clipBehavior: Clip.antiAlias,
+                      margin: const EdgeInsets.all(8.0),
+                      child: TableCalendar(
+                        rowHeight: 70,
+                        focusedDay: _focusedDay,
+                        selectedDayPredicate: (day) =>
+                            isSameDay(_selectedDay, day),
+                        firstDay: firstDay,
+                        lastDay: lastDay,
+                        eventLoader: _getBillsForDay,
+                        onDaySelected: (selectedDay, focusedDay) {
+                          setState(() {
+                            _selectedDay = selectedDay;
+                            _focusedDay = focusedDay;
+                          });
+                        },
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                        calendarFormat: _calendarFormat,
+                        availableCalendarFormats: const {
+                          CalendarFormat.month: 'Month'
+                        },
+                        calendarStyle: const CalendarStyle(
+                            defaultTextStyle: TextStyle(fontSize: 20),
+                            weekendTextStyle: TextStyle(fontSize: 20)),
+                        calendarBuilders: CalendarBuilders(
+                          markerBuilder: (context, date, events) {
+                            if (events.isNotEmpty) {
+                              return Positioned(
+                                bottom: 1,
+                                right: 1,
+                                child: _buildEventsMarker(
+                                    date, _groupedBills[date]!),
+                              );
+                            }
+                            return Text('');
+                          },
                         ),
-                        onTap: calendarTapped,
-                        onLongPress: (calendarLongPressDetails) {
+                        onDayLongPressed:
+                            (DateTime startDate, DateTime endDate) {
                           setState(() {
                             dateOfPaymentEditingController.text =
-                                DateFormat('yyyy-MM-dd')
-                                    .format(calendarLongPressDetails.date!);
+                                DateFormat('yyyy-MM-dd').format(startDate);
                           });
 
                           FormDialog.showFormDialog(
@@ -158,20 +164,19 @@ class _BillsScreenState extends State<BillsScreen> {
                         },
                       ),
                     ),
-                    Expanded(
-                        flex: 3,
-                        child: Container(
-                            color: Colors.white,
-                            child: ListView.builder(
-                              itemBuilder: (BuildContext context, int index) {
-                                return BillsListTile(bill: _bills[index]);
-                              },
-                              itemCount: _bills.length,
-                            )))
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _selectedBills.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Bill bill = bills[index];
+                        return BillsListTile(bill: _selectedBills[index]);
+                      },
+                    ),
                   ],
                 );
               }
-              return const Text('no data');
+              return Text('no data');
             }),
         floatingActionButton: FloatingActionButton(
           child: const Text(''),
@@ -181,74 +186,33 @@ class _BillsScreenState extends State<BillsScreen> {
         ));
   }
 
-  void calendarTapped(CalendarTapDetails calendarTapDetails) {
-    if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
-      setState(() {
-        _bills = calendarTapDetails.appointments!
-            .map((appointment) => appointment as Bill)
-            .toList();
-      });
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+
+  _groupBills(List<Bill> bills) {
+    _groupedBills = LinkedHashMap(equals: isSameDay, hashCode: getHashCode);
+    for (var bill in bills) {
+      DateTime date = DateTime.utc(bill.dateOfPayment.year,
+          bill.dateOfPayment.month, bill.dateOfPayment.day, 0);
+
+      if (_groupedBills[date] == null) {
+        _groupedBills[date] = [];
+        _groupedBills[date]!.add(bill);
+      }
     }
   }
 
-  Widget monthCellBuilder(BuildContext context, MonthCellDetails details) {
-    Padding padding;
-    if (details.appointments.isNotEmpty) {
-      var bills = details.appointments
-          .map((appointment) => appointment as Bill)
-          .toList();
+  List<dynamic> _getBillsForDay(DateTime date) {
+    return _groupedBills[date] ?? [];
+  }
 
-      if (bills.any((bill) => bill.isPaid == false)) {
-        padding = Padding(
-          padding: const EdgeInsets.only(top: 2.0),
-          child: Container(
-            decoration:
-                BoxDecoration(border: Border.all(color: Colors.black12)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(details.date.day.toString()),
-                const Icon(
-                  Icons.announcement,
-                  color: Colors.red,
-                )
-              ],
-            ),
-          ),
-        );
-      } else {
-        padding = Padding(
-          padding: const EdgeInsets.only(top: 2.0),
-          child: Container(
-            decoration:
-                BoxDecoration(border: Border.all(color: Colors.black12)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(details.date.day.toString()),
-                const Icon(
-                  Icons.check,
-                  color: Colors.green,
-                )
-              ],
-            ),
-          ),
-        );
-      }
-    } else {
-      padding = Padding(
-          padding: const EdgeInsets.only(top: 2.0),
-          child: Container(
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.black12)),
-              child: Column(
-                  children: <Widget>[Text(details.date.day.toString())])));
-    }
-
-    return Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black12, width: 0.5),
-            borderRadius: BorderRadius.circular(1)),
-        child: padding);
+  Widget _buildEventsMarker(DateTime date, List<Bill> bills) {
+    return const Center(
+        child: Icon(
+      Icons.verified,
+      color: Colors.red,
+      size: 16,
+    ));
   }
 }

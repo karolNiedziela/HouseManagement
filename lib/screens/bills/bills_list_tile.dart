@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/bill.dart';
+import 'package:housemanagement/services/bills_service.dart';
+import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/popup_menu_widget.dart';
+import 'package:intl/intl.dart';
 
 class BillsListTile extends StatefulWidget {
   final Bill bill;
@@ -12,6 +15,8 @@ class BillsListTile extends StatefulWidget {
 }
 
 class _BillsListTileState extends State<BillsListTile> {
+  final BillsService _billsService = BillsService();
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -21,9 +26,24 @@ class _BillsListTileState extends State<BillsListTile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[..._buildColumnInListView(widget.bill)],
         ),
+        subtitle: Text(DateFormat("EEEE, dd MMMM, yyyy", 'pl_PL')
+            .format(widget.bill.dateOfPayment)),
         trailing: PopupMenuWidget(
+          deleteAction: () async {
+            await _billsService.deleteBill(widget.bill.key);
+            setState(() {});
+          },
           additionalPopupMenuItems: [
-            AdditionalPopupMenuItem(onTap: () {}, text: 'Zapłać')
+            AdditionalPopupMenuItem(
+                onTap: () {
+                  FormDialog.showConfirmDeleteDialog(
+                      context: context,
+                      onYesPressed: () async {
+                        await _billsService.payBill(widget.bill.key);
+                      },
+                      text: "Czy na pewno chcesz zmienić status na zapłacony?");
+                },
+                text: 'Zapłać')
           ],
         ),
       ),

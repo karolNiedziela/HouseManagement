@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 class Bill {
+  String key;
   String name;
   String serviceProvider;
   double amount;
@@ -8,13 +9,15 @@ class Bill {
   bool isPaid;
 
   Bill(
-      {required this.name,
+      {required this.key,
+      required this.name,
       required this.serviceProvider,
       required this.amount,
       required this.dateOfPayment,
       this.isPaid = false});
 
   factory Bill.fromMap(Map<String, dynamic> map) => Bill(
+      key: map['key'],
       name: map['name'],
       serviceProvider: map['serviceProvider'],
       amount: double.parse("${map['amount']}"),
@@ -23,6 +26,7 @@ class Bill {
 
   Map<String, dynamic> toMap() {
     return {
+      'key': key,
       'name': name,
       'serviceProvider': serviceProvider,
       'amount': amount,
