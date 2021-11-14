@@ -60,8 +60,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       leading:
                           const Icon(Icons.person_sharp, color: Colors.indigo),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/household');
+                        Navigator.pushReplacementNamed(context, '/household');
                       },
                     ),
                     ListTile(
@@ -70,8 +69,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       leading:
                           const Icon(Icons.shopping_cart, color: Colors.indigo),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/shoppinglist');
+                        Navigator.pushReplacementNamed(
+                            context, '/shoppinglist');
                       },
                     ),
                     ListTile(
@@ -94,8 +93,17 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/invitations');
+                        Navigator.pushReplacementNamed(context, '/invitations');
+                      },
+                    ),
+                    ListTile(
+                      title: const Text(
+                        'Rachunki',
+                        style: TextStyle(color: Colors.indigo, fontSize: 17),
+                      ),
+                      leading: const Icon(Icons.payments, color: Colors.indigo),
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, '/bills');
                       },
                     )
                   ],

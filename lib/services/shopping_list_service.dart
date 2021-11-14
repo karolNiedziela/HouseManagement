@@ -12,18 +12,21 @@ class ShoppingListService {
   final UserService _userService = UserService();
 
   Stream<List<ShoppingList>> getShoppingLists(
-      List<String> userIds, String startDate, String endDate) {
+      List<String> userIds, String startDate, String endDate,
+      {bool isDone = false}) {
     return shoppingListCollection
         .where('userUId', whereIn: userIds)
         .where('dateCreated', isGreaterThanOrEqualTo: startDate)
         .where('dateCreated', isLessThanOrEqualTo: endDate)
+        .where('isDone', isEqualTo: isDone)
         .snapshots()
         .map(_shoppingListFromSnapshot);
   }
 
   List<ShoppingList> _shoppingListFromSnapshot(QuerySnapshot snapshot) {
     var shoppingLists = snapshot.docs.map((doc) {
-      var shoppingList = ShoppingList.fromMapWithProducts(doc.data() as Map<String, dynamic>);
+      var shoppingList =
+          ShoppingList.fromMapWithProducts(doc.data() as Map<String, dynamic>);
       shoppingList.docId = doc.id;
       return shoppingList;
     }).toList();

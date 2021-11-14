@@ -8,7 +8,7 @@ class FormDialog {
       required String dialogHeader}) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
             scrollable: true,
             title: Center(child: Text(dialogHeader)),
@@ -22,13 +22,17 @@ class FormDialog {
   }
 
   static void showConfirmDeleteDialog(
-      {required BuildContext context, Function? onYesPressed}) {
+      {required BuildContext context,
+      Function? onYesPressed,
+      String text = ''}) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: const Text('Potwierdź'),
-            content: const Text('Jesteś pewien, że chcesz usunąć?'),
+            content: text.isEmpty
+                ? const Text('Jesteś pewien, że chcesz usunąć?')
+                : Text(text),
             actions: [
               TextButton(
                   onPressed: () {

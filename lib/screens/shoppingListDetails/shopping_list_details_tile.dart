@@ -5,7 +5,7 @@ import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/positive_number_text_form_field_widget.dart';
-import 'package:housemanagement/widgets/trailing_popup_menu_widget.dart';
+import 'package:housemanagement/widgets/popup_menu_widget.dart';
 
 class ShoppingListDetailsTile extends StatefulWidget {
   final Product product;
@@ -42,7 +42,7 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
         displayButtonText: 'Dodaj'));
 
     return Card(
-        color: widget.product.isBought ? Colors.blueGrey[200] : null,
+        color: widget.product.isBought ? Colors.indigo[100] : null,
         child: ListTile(
           dense: true,
           title: Row(
@@ -67,9 +67,13 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
                 )
               : null,
           trailing: widget.product.isBought
-              ? TrailingPopupMenuWidget(
+              ? PopupMenuWidget(
                   editAction: () {
-                    FormDialog.showFormDialog(context: context, formContent: [], key: _editFormKey, dialogHeader: "Edytuj");
+                    FormDialog.showFormDialog(
+                        context: context,
+                        formContent: [],
+                        key: _editFormKey,
+                        dialogHeader: "Edytuj");
                   },
                   deleteAction: () async {
                     await _shoppingListService.deleteProduct(
@@ -87,7 +91,7 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
                         text: 'Ustaw cenę')
                   ],
                 )
-              : TrailingPopupMenuWidget(deleteAction: () async {
+              : PopupMenuWidget(deleteAction: () async {
                   await _shoppingListService.deleteProduct(
                       widget.docId, widget.product);
                 }),

@@ -5,6 +5,7 @@ import 'package:housemanagement/services/user_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
+import 'package:housemanagement/widgets/drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 class InvitationScreen extends StatefulWidget {
@@ -56,25 +57,30 @@ class _InvitationScreenState extends State<InvitationScreen> {
       displayButtonText: 'Wyślij zaproszenie',
     ));
 
-    return StreamProvider<List<Invitation>>.value(
-        initialData: const [],
-        value: UserService().appUserInvitations,
-        child: Scaffold(
-            body: const InvitationList(),
-            floatingActionButton: FloatingActionButton(
-                onPressed: () async {
-                  FormDialog.showFormDialog(
-                      context: context,
-                      formContent: [
-                        emailField,
-                        const SizedBox(height: 10),
-                        addButton
-                      ],
-                      key: _formKey,
-                      dialogHeader: "Zaproszenie");
-                },
-                child: const Icon(Icons.add),
-                backgroundColor: Colors.blueAccent[200])));
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Zaproszenia"),
+          centerTitle: true,
+        ),
+        drawer: const DrawerWidget(),
+        body: StreamProvider<List<Invitation>>.value(
+            initialData: const [],
+            value: UserService().appUserInvitations,
+            child: const InvitationList()),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            FormDialog.showFormDialog(
+                context: context,
+                formContent: [
+                  emailField,
+                  const SizedBox(height: 10),
+                  addButton
+                ],
+                key: _formKey,
+                dialogHeader: "Zaproszenie");
+          },
+          child: const Icon(Icons.add),
+        ));
   }
 
   Future emailValidator(String receiverEmail) async {

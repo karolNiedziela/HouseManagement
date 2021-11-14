@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:housemanagement/models/app_user.dart';
+import 'package:housemanagement/screens/bills/bills_screen.dart';
 import 'package:housemanagement/screens/household/household_screen.dart';
 import 'package:housemanagement/screens/invitations/invitation_screen.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
@@ -8,7 +9,6 @@ import 'package:housemanagement/screens/shoppingListDetails/shopping_list_detail
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:housemanagement/widgets/main_scaffold.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -31,32 +31,33 @@ class MyApp extends StatelessWidget {
         value: AuthService().appUser,
         initialData: null,
         child: MaterialApp(
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate
-            ],
-            supportedLocales: const [
-              Locale('pl', 'PL'),
-            ],
-            routes: {
-              '/household': (context) => const MainScaffoldWidget(
-                    body: HouseHouldScreen(),
-                    appBarTitle: 'Grupa domowa',
-                  ),
-              '/invitations': (context) => const MainScaffoldWidget(
-                    body: InvitationScreen(),
-                    appBarTitle: 'Zaproszenia',
-                  ),
-              '/shoppinglist': (context) => const MainScaffoldWidget(
-                    body: ShoppingListScreen(),
-                    appBarTitle: 'Listy zakupów',
-                  ),
-              '/shoppinglistdetails': (context) =>
-                  const ShoppingListDetailsScreen()
-            },
-            title: 'House management',
-            theme: ThemeData(
-              primarySwatch: Colors.indigo,
+          localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+          supportedLocales: const [
+            Locale('pl', 'PL'),
+          ],
+          routes: {
+            '/household': (context) => const HouseHouldScreen(),
+            '/invitations': (context) => const InvitationScreen(),
+            '/shoppinglist': (context) => const ShoppingListScreen(),
+            '/shoppinglistdetails': (context) =>
+                const ShoppingListDetailsScreen(),
+            '/bills': (context) => const BillsScreen()
+          },
+          title: 'House management',
+          theme: ThemeData(
+            primarySwatch: Colors.indigo,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.indigo),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                backgroundColor: Colors.indigo),
+            bottomAppBarTheme:
+                const BottomAppBarTheme(shape: CircularNotchedRectangle()),
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              selectedItemColor: Colors.indigo[900],
+              unselectedItemColor: Colors.black,
+              backgroundColor: Colors.indigo[100],
             ),
-            home: const AuthWrapper()));
+          ),
+          home: const AuthWrapper(),
+        ));
   }
 }

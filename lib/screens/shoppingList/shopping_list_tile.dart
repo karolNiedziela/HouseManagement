@@ -11,10 +11,11 @@ class ShoppingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/shoppinglistdetails', arguments: shoppingList);
+        Navigator.pushNamed(context, '/shoppinglistdetails',
+            arguments: shoppingList);
       },
       child: Card(
-          color: Colors.blueAccent[100],
+          color: Colors.indigo[100],
           semanticContainer: true,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -34,8 +35,10 @@ class ShoppingListTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    shoppingList.products.isEmpty ? const Text('Brak produktów') : Text(
-                        "${shoppingList.products.where((product) => product.isBought).toList().length} / ${shoppingList.products.length.toString()}")
+                    shoppingList.products.isEmpty
+                        ? const Text('Brak produktów')
+                        : Text(
+                            "${shoppingList.products.where((product) => product.isBought).toList().length} / ${shoppingList.products.length.toString()}")
                   ],
                 )
               ],

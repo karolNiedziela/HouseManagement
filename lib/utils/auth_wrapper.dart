@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/screens/auth/authenticate_screen.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
-import 'package:housemanagement/widgets/main_scaffold.dart';
 import 'package:provider/provider.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -16,9 +15,6 @@ class AuthWrapper extends StatelessWidget {
       return const AuthenticateScreen();
     }
 
-    return const MainScaffoldWidget(
-      body: ShoppingListScreen(),
-      appBarTitle: 'Listy zakupów',
-    );
+    return const ShoppingListScreen();
   }
 }

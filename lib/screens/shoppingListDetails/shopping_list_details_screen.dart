@@ -6,6 +6,7 @@ import 'package:housemanagement/screens/shoppingListDetails/shopping_list_detail
 import 'package:housemanagement/services/shopping_list_service.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
+import 'package:housemanagement/widgets/popup_menu_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/positive_number_text_form_field_widget.dart';
 
@@ -19,16 +20,19 @@ class ShoppingListDetailsScreen extends StatefulWidget {
 
 class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
+  late ShoppingList shoppingList;
 
   final TextEditingController nameEditingController = TextEditingController();
   final TextEditingController quantityEditingController =
       TextEditingController();
 
+  final ShoppingListService _shoppingListService = ShoppingListService();
+
   @override
   Widget build(BuildContext context) {
-    final shoppingList = ModalRoute.of(context)!.settings.arguments as ShoppingList;
-
-    final ShoppingListService _shoppingListService = ShoppingListService();
+    setState(() {
+      shoppingList = ModalRoute.of(context)!.settings.arguments as ShoppingList;
+    });
 
     final nameField = NameTextFormFieldWidget(
         controller: nameEditingController,
@@ -55,29 +59,8 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       appBar: AppBar(
         title: Text(shoppingList.name),
         centerTitle: true,
-        actions: [
-          Visibility(
-            visible: shoppingList.isDone == false,
-            child: IconButton(onPressed: () {
-              FormDialog.showConfirmDeleteDialog(context: context,
-              onYesPressed: () async  {
-                await _shoppingListService.acceptShoppingList(shoppingList.docId!);
-                Navigator.of(context).pop();
-              });
-            }, icon: const Icon(Icons.done)),
-          ),
-          IconButton(
-              onPressed: () {
-                FormDialog.showConfirmDeleteDialog(
-                    context: context,
-                    onYesPressed: () async {
-                      await _shoppingListService
-                          .deleteShoppingList(shoppingList.docId!);
-
-                      Navigator.of(context).pop();
-                    });
-              },
-              icon: const Icon(Icons.delete))
+        actions: <Widget>[
+          getPopupMenuWidget(),
         ],
       ),
       body: Column(
@@ -129,12 +112,44 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                           setState(() {});
                         },
                         child: const Icon(Icons.add),
-                        backgroundColor: Colors.blueAccent[200],
                       )
                     ]),
               ))
         ],
       ),
     );
+  }
+
+  Widget getPopupMenuWidget() {
+    if (shoppingList.isDone) {
+      return PopupMenuWidget(
+        deleteAction: _deleteAction,
+        isEditVisible: false,
+      );
+    }
+
+    return PopupMenuWidget(
+      deleteAction: _deleteAction,
+      isEditVisible: false,
+      additionalPopupMenuItems: [
+        AdditionalPopupMenuItem(
+            onTap: () {
+              FormDialog.showConfirmDeleteDialog(
+                  context: context,
+                  onYesPressed: () async {
+                    await _shoppingListService
+                        .acceptShoppingList(shoppingList.docId!);
+                    Navigator.of(context).pop();
+                  },
+                  text: 'Czy jesteś pewien, że chcesz zaakceptować listę?');
+            },
+            text: 'Zaakceptuj')
+      ],
+    );
+  }
+
+  void _deleteAction() async {
+    await _shoppingListService.deleteShoppingList(shoppingList.docId!);
+    Navigator.of(context).pop();
   }
 }

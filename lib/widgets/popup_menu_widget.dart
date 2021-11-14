@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 
-class TrailingPopupMenuWidget extends StatefulWidget {
-  final List<AdditionalPopupMenuItem>? additionalPopupMenuItems;
+class PopupMenuWidget extends StatefulWidget {
   final Function? editAction;
   final bool isEditVisible;
   final Function? deleteAction;
-  const TrailingPopupMenuWidget(
+  final List<AdditionalPopupMenuItem>? additionalPopupMenuItems;
+  const PopupMenuWidget(
       {Key? key,
       this.editAction,
       this.isEditVisible = true,
@@ -15,16 +15,17 @@ class TrailingPopupMenuWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _TrailingPopupMenuWidgetState createState() =>
-      _TrailingPopupMenuWidgetState();
+  _PopupMenuWidgetState createState() => _PopupMenuWidgetState();
 }
 
-class _TrailingPopupMenuWidgetState extends State<TrailingPopupMenuWidget> {
+class _PopupMenuWidgetState extends State<PopupMenuWidget> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      itemBuilder: (context) =>
-          <PopupMenuEntry>[...getDefaultMenuItems(), ...getAdditionalItems()],
+      itemBuilder: (context) => <PopupMenuEntry>[
+        ...getAdditionalItems(),
+        ...getDefaultMenuItems(),
+      ],
     );
   }
 
@@ -33,9 +34,10 @@ class _TrailingPopupMenuWidgetState extends State<TrailingPopupMenuWidget> {
     if (widget.isEditVisible) {
       defaultPopupMenuItems.add(PopupMenuItem(
           child: const Text('Edytuj'),
-          onTap: () =>
-           widget.editAction
-          ));
+          onTap: () {
+            Future<void>.delayed(
+                const Duration(), () => widget.editAction!.call());
+          }));
     }
 
     defaultPopupMenuItems.add(PopupMenuItem(

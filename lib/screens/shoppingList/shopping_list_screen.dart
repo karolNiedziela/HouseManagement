@@ -7,6 +7,7 @@ import 'package:housemanagement/services/shopping_list_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/utils/loading_element.dart';
+import 'package:housemanagement/widgets/drawer_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:provider/provider.dart';
@@ -22,14 +23,39 @@ class ShoppingListScreen extends StatefulWidget {
 class _ShoppingListScreenState extends State<ShoppingListScreen> {
   final shoppingListNameEditingController = TextEditingController();
   final now = DateTime.now();
+  final _formKey = GlobalKey<FormState>();
   late DateTime startDate = DateTime(now.year, now.month, 1);
   late DateTime endDate = DateTime(now.year, now.month, now.day);
+  late bool isDone = false;
+  int _selectedIndex = 0;
+
+  Widget getShortDate() {
+    return Text(
+      "${DateFormat('yyyy-MM-dd').format(startDate)} - ${DateFormat('yyyy-MM-dd').format(endDate)}",
+      style: const TextStyle(
+          color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+    );
+  }
+
+  String getStringShortDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (_selectedIndex == 0) {
+        isDone = false;
+      } else {
+        isDone = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final ShoppingListService _shoppingListService = ShoppingListService();
 
-    final _formKey = GlobalKey<FormState>();
     final shoppingListNameField = NameTextFormFieldWidget(
         controller: shoppingListNameEditingController,
         hintText: 'Nazwa',
@@ -47,122 +73,122 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       displayButtonText: 'Dodaj',
     ));
 
-    return Column(
-      children: <Widget>[
-        Expanded(
-          flex: 2,
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    style: ButtonStyle(
-                        shadowColor:
-                            MaterialStateProperty.all(Colors.transparent),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.transparent),
-                        overlayColor:
-                            MaterialStateProperty.all(Colors.transparent)),
-                    onPressed: () async {
-                      final picked = (await showDateRangePicker(
-                          context: context,
-                          firstDate: DateTime(2019),
-                          lastDate: DateTime(now.year, now.month + 1, 1),
-                          initialDateRange:
-                              DateTimeRange(start: startDate, end: endDate),
-                          initialEntryMode: DatePickerEntryMode.inputOnly,
-                          locale: const Locale('pl', 'PL')));
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Listy zakupów"),
+          centerTitle: true,
+        ),
+        drawer: const DrawerWidget(),
+        extendBody: true,
+        resizeToAvoidBottomInset: true,
+        body: Column(children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          shadowColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          overlayColor:
+                              MaterialStateProperty.all(Colors.transparent)),
+                      onPressed: () async {
+                        final picked = (await showDateRangePicker(
+                            context: context,
+                            firstDate: DateTime(2019),
+                            lastDate: DateTime(now.year, now.month + 1, 1),
+                            initialDateRange:
+                                DateTimeRange(start: startDate, end: endDate),
+                            initialEntryMode: DatePickerEntryMode.inputOnly,
+                            locale: const Locale('pl', 'PL')));
 
-                      if (picked != null) {
-                        setState(() {
-                          startDate = picked.start;
-                          endDate = picked.end;
-                        });
-                      }
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Text('Wybierz zakres:',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 17)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            const Icon(Icons.calendar_today,
-                                color: Colors.indigo),
-                            const SizedBox(width: 10),
-                            getShortDate(),
-                          ],
-                        ),
-                      ],
-                    )),
-              ],
+                        if (picked != null) {
+                          setState(() {
+                            startDate = picked.start;
+                            endDate = picked.end;
+                          });
+                        }
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text('Wybierz zakres:',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 17)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Icon(Icons.calendar_today,
+                                  color: Colors.indigo),
+                              const SizedBox(width: 10),
+                              getShortDate(),
+                            ],
+                          ),
+                        ],
+                      )),
+                ],
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 10,
-          child: FutureBuilder(
-            future: HouseholdService().getUserIds(),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingElement();
-              }
-
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  return StreamProvider<List<ShoppingList>>.value(
-                      initialData: const [],
-                      value: ShoppingListService().getShoppingLists(
-                          snapshot.data!,
-                          getStringShortDate(startDate),
-                          getStringShortDate(endDate)),
-                      child: const ShoppingListList());
+          Expanded(
+            flex: 14,
+            child: FutureBuilder(
+              future: HouseholdService().getUserIds(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const LoadingElement();
                 }
-              }
 
-              return const Text('');
-            },
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    shoppingListNameField.controller.clear();
-                    FormDialog.showFormDialog(
-                        context: context,
-                        formContent: [shoppingListNameField, addButton],
-                        key: _formKey,
-                        dialogHeader: 'Lista zakupów');
-                  },
-                  child: const Icon(Icons.add),
-                  backgroundColor: Colors.blueAccent[200],
-                ),
-              ],
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    return StreamProvider<List<ShoppingList>>.value(
+                        initialData: const [],
+                        value: ShoppingListService().getShoppingLists(
+                            snapshot.data!,
+                            getStringShortDate(startDate),
+                            getStringShortDate(endDate),
+                            isDone: isDone),
+                        child: const ShoppingListList());
+                  }
+                }
+
+                return const Text('');
+              },
             ),
           ),
-        )
-      ],
-    );
-  }
-
-  Widget getShortDate() {
-    return Text(
-      "${DateFormat('yyyy-MM-dd').format(startDate)} - ${DateFormat('yyyy-MM-dd').format(endDate)}",
-      style: const TextStyle(
-          color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
-    );
-  }
-
-  String getStringShortDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
+        ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  shoppingListNameField.controller.clear();
+                  FormDialog.showFormDialog(
+                      context: context,
+                      formContent: [shoppingListNameField, addButton],
+                      key: _formKey,
+                      dialogHeader: 'Lista zakupów');
+                },
+              )
+            : null,
+        bottomNavigationBar: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            clipBehavior: Clip.antiAlias,
+            notchMargin: 5,
+            child: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.list_alt), label: 'Aktualne'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.checklist_rtl), label: 'Zaakceptowane'),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            )));
   }
 }
