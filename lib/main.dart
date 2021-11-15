@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/screens/bills/bills_screen.dart';
-import 'package:housemanagement/screens/household/household_screen.dart';
-import 'package:housemanagement/screens/invitations/invitation_screen.dart';
+import 'package:housemanagement/screens/household/base_household_screen.dart';
+import 'package:housemanagement/screens/household/invitations/invitation_screen.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
 import 'package:housemanagement/screens/shoppingListDetails/shopping_list_details_screen.dart';
 import 'package:housemanagement/services/auth_service.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
             Locale('pl', 'PL'),
           ],
           routes: {
-            '/household': (context) => const HouseHouldScreen(),
+            '/household': (context) => const BaseHouseholdScreen(),
             '/invitations': (context) => const InvitationScreen(),
             '/shoppinglist': (context) => const ShoppingListScreen(),
             '/shoppinglistdetails': (context) =>
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             bottomAppBarTheme:
                 const BottomAppBarTheme(shape: CircularNotchedRectangle()),
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
-              selectedItemColor: Colors.indigo[900],
+              selectedItemColor: Colors.indigoAccent,
               unselectedItemColor: Colors.black,
               backgroundColor: Colors.indigo[100],
             ),

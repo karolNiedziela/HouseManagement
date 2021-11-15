@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:housemanagement/models/bill.dart';
 import 'package:intl/intl.dart';
 
@@ -25,7 +24,7 @@ class BillsService {
     return bills;
   }
 
-  Future<Bill> addBill(String name, String serviceProvider, double amount,
+  Future addBill(String name, String serviceProvider, double amount,
       String dateOfPayment) async {
     var ref = billsColection.doc();
 
@@ -37,8 +36,6 @@ class BillsService {
         dateOfPayment: DateTime.parse(dateOfPayment));
 
     ref.set(bill.toMap());
-
-    return bill;
   }
 
   Future<Bill> payBill(String key) async {

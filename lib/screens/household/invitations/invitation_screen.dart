@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/invitation.dart';
-import 'package:housemanagement/screens/invitations/invitation_list.dart';
+import 'package:housemanagement/screens/household/invitations/invitation_list.dart';
 import 'package:housemanagement/services/user_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';

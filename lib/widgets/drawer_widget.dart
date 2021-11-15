@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/services/auth_service.dart';
-import 'package:housemanagement/services/user_service.dart';
 import 'package:housemanagement/utils/auth_wrapper.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -12,27 +11,11 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   final AuthService _authService = AuthService();
-  final UserService _userService = UserService();
 
-  bool hasFriendRequests = false;
-  int? friendRequestsNumber;
-
-  getData() async {
-    var invitations = await _userService.getUserFriendRequests();
-    if (mounted && invitations.isNotEmpty) {
-      setState(() {
-        hasFriendRequests = true;
-        friendRequestsNumber = invitations.length;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getData(),
-      builder: (context, snapshot) {
-        return Drawer(
+    return Drawer(
           child: Column(
             children: [
               Expanded(
@@ -71,29 +54,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       onTap: () {
                         Navigator.pushReplacementNamed(
                             context, '/shoppinglist');
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('Zaproszenia',
-                          style: TextStyle(color: Colors.indigo, fontSize: 17)),
-                      leading: const Icon(Icons.insert_invitation,
-                          color: Colors.indigo),
-                      trailing: ClipOval(
-                        child: friendRequestsNumber == null
-                            ? null
-                            : Container(
-                                color: Colors.indigo[100],
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 8),
-                                child: Text(friendRequestsNumber.toString(),
-                                    style: TextStyle(
-                                        color: Colors.indigo[900],
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                      ),
-                      onTap: () {
-                        Navigator.pushReplacementNamed(context, '/invitations');
                       },
                     ),
                     ListTile(
@@ -139,7 +99,5 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ],
           ),
         );
-      },
-    );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:housemanagement/models/invitation.dart';
-import 'package:housemanagement/screens/invitations/invitation_tile.dart';
 import 'package:provider/provider.dart';
+
+import 'invitation_tile.dart';
 
 class InvitationList extends StatefulWidget {
   const InvitationList({Key? key}) : super(key: key);

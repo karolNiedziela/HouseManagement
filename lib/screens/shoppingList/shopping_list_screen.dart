@@ -179,13 +179,14 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             clipBehavior: Clip.antiAlias,
-            notchMargin: 5,
+
             child: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                     icon: Icon(Icons.list_alt), label: 'Aktualne'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.checklist_rtl), label: 'Zaakceptowane'),
+                    
               ],
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,

@@ -77,7 +77,7 @@ class _BillsScreenState extends State<BillsScreen> {
     final addButton = getSubmitButton(SubmitButtonWidget(
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            var bill = await _billsService.addBill(
+          await _billsService.addBill(
                 billNameEditingController.text,
                 serviceProviderEditingController.text,
                 double.parse(amountEditingController.text),
@@ -140,7 +140,7 @@ class _BillsScreenState extends State<BillsScreen> {
                                     date, _groupedBills[date]!),
                               );
                             }
-                            return Text('');
+                            return const Text('');
                           },
                         ),
                         onDayLongPressed:
@@ -169,7 +169,6 @@ class _BillsScreenState extends State<BillsScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _selectedBills.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Bill bill = bills[index];
                         return BillsListTile(bill: _selectedBills[index]);
                       },
                     ),
@@ -186,21 +185,25 @@ class _BillsScreenState extends State<BillsScreen> {
         ));
   }
 
-  int getHashCode(DateTime key) {
-    return key.day * 1000000 + key.month * 10000 + key.year;
-  }
-
   _groupBills(List<Bill> bills) {
-    _groupedBills = LinkedHashMap(equals: isSameDay, hashCode: getHashCode);
+    _groupedBills = LinkedHashMap(equals: isSameDay);
     for (var bill in bills) {
       DateTime date = DateTime.utc(bill.dateOfPayment.year,
           bill.dateOfPayment.month, bill.dateOfPayment.day, 0);
+
 
       if (_groupedBills[date] == null) {
         _groupedBills[date] = [];
         _groupedBills[date]!.add(bill);
       }
+      else {
+          _groupedBills[date]!.add(bill);
+      }
     }
+  }
+
+    int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
   }
 
   List<dynamic> _getBillsForDay(DateTime date) {
@@ -208,10 +211,14 @@ class _BillsScreenState extends State<BillsScreen> {
   }
 
   Widget _buildEventsMarker(DateTime date, List<Bill> bills) {
+    if (bills.any((bill) => bill.isPaid == false)) {
+      return const Center(child: Icon(Icons.verified, color: Colors.red, size: 16));
+    }
+
     return const Center(
         child: Icon(
       Icons.verified,
-      color: Colors.red,
+      color: Colors.green,
       size: 16,
     ));
   }
