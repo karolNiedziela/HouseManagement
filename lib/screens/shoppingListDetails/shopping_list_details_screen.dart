@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/models/product.dart';
@@ -7,7 +8,7 @@ import 'package:housemanagement/services/shopping_list_service.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:housemanagement/widgets/popup_menu_widget.dart';
-import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/base_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/positive_number_text_form_field_widget.dart';
 
 class ShoppingListDetailsScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class ShoppingListDetailsScreen extends StatefulWidget {
 class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
   late ShoppingList shoppingList;
+  String? _validationMessage;
 
   final TextEditingController nameEditingController = TextEditingController();
   final TextEditingController quantityEditingController =
@@ -34,16 +36,38 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       shoppingList = ModalRoute.of(context)!.settings.arguments as ShoppingList;
     });
 
-    final nameField = NameTextFormFieldWidget(
+    final nameField = BaseTextFormFieldWidget(
         controller: nameEditingController,
         hintText: 'Nazwa',
-        iconData: Icons.shopping_bag);
+        prefixIcon: Icons.shopping_bag,
+        textInputAction: TextInputAction.done,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Wprowadź nazwę.";
+          }
+
+          if (_validationMessage != null) {
+            return _validationMessage;
+          }
+          return null;
+        });
 
     final quantityField = PositiveNumberTextFormFieldWidget(
         controller: quantityEditingController, hintText: 'Ilość');
 
     final addButton = getSubmitButton(SubmitButtonWidget(
       onPressed: () async {
+        if (await _shoppingListService.productExists(
+            shoppingList.docId!, nameEditingController.text)) {
+          setState(() {
+            _validationMessage = "Produkt o podanej nazwie już jest na liście.";
+          });
+        } else {
+          setState(() {
+            _validationMessage = null;
+          });
+        }
+
         if (_formKey.currentState!.validate()) {
           await _shoppingListService.addProduct(
               shoppingList.docId!,
@@ -78,8 +102,10 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return ShoppingListDetailsTile(
-                              product: snapshot.data![index],
-                              docId: shoppingList.docId!);
+                            product: snapshot.data![index],
+                            docId: shoppingList.docId!,
+                            isDone: shoppingList.isDone,
+                          );
                         });
                   }
 

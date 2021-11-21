@@ -44,8 +44,7 @@ class UserService {
   List<Invitation> _invitationListFromSnapshot(QuerySnapshot snapshot) {
     var invitations = snapshot.docs.map((doc) {
       return Invitation.fromMap(doc.data() as Map<String, dynamic>);
-    }
-    ).toList();
+    }).toList();
 
     return invitations
         .where((invitation) => invitation.receiverUId == _authService.uid)
@@ -87,11 +86,18 @@ class UserService {
         .set(invitation.toMap());
   }
 
-  Future<bool> canSendFriendRequest(String receiverEmail) async {
+  Future<String?> canSendFriendRequest(String receiverEmail) async {
+    var exist =
+        await userCollection.where('email', isEqualTo: receiverEmail).get();
+
+    if (exist.docs.isEmpty) {
+      return "Nie istnieje użytkownik o podanym adresie email.";
+    }
+
     var receiver = await getByEmail(receiverEmail);
 
     if (await _householdService.isAlreadyInHousehold(receiver.uid)) {
-      return false;
+      return "Użytkownik jest już w grupie domowej";
     }
 
     var currentUserUId = _authService.uid;
@@ -123,9 +129,9 @@ class UserService {
         querySnapshots[1].size != 0 ||
         querySnapshots[2].size != 0 ||
         querySnapshots[3].size != 0) {
-      return false;
+      return "Już wysłałeś zaproszenie do tej osoby.";
     }
-    return true;
+    return null;
   }
 
   Future changeFriendRequestStatus(

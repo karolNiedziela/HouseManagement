@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 
 class StartTitleWidget extends StatelessWidget {
   const StartTitleWidget({Key? key}) : super(key: key);
@@ -13,20 +14,20 @@ class StartTitleWidget extends StatelessWidget {
             Icon(
               Icons.home,
               size: 100.0,
-              color: Colors.indigo,
+              color: AppColors.primaryColor,
             ),
             Text('House',
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
+                    color: AppColors.primaryColor,
                     letterSpacing: 2)),
             Text('Management',
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 40,
-                    color: Colors.indigo,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2)),
           ],

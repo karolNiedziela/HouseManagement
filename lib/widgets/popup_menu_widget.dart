@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 
 class PopupMenuWidget extends StatefulWidget {
-  final Function? editAction;
+  final Function()? editAction;
   final bool isEditVisible;
   final Function? deleteAction;
   final List<AdditionalPopupMenuItem>? additionalPopupMenuItems;
@@ -46,7 +46,7 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
         Future<void>.delayed(
             const Duration(),
             () => FormDialog.showConfirmDeleteDialog(
-                context: context, onYesPressed: widget.deleteAction));
+                context: context, onYesPressed: widget.deleteAction!.call()));
       },
     ));
 

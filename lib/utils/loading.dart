@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:housemanagement/core/colors.dart';
 
 class Loading extends StatelessWidget {
   const Loading({Key? key}) : super(key: key);
@@ -7,8 +8,9 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.indigo,
+        color: AppColors.primaryColor,
         child: const Center(
-            child: SpinKitThreeBounce(color: Colors.white, size: 50.0)));
+            child:
+                SpinKitThreeBounce(color: AppColors.whiteColor, size: 50.0)));
   }
 }

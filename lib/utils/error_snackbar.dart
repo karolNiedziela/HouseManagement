@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 
 class ErrorSnackBar {
   static void showError(BuildContext context, String message) {
@@ -17,7 +18,7 @@ class ErrorSnackBar {
               onTap: () {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
               },
-              child: const Icon(Icons.close, color: Colors.white),
+              child: const Icon(Icons.close, color: AppColors.whiteColor),
             )
           ]),
     );

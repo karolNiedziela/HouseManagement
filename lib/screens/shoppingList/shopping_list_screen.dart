@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_list.dart';
 import 'package:housemanagement/services/household_service.dart';
@@ -8,7 +9,7 @@ import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/utils/loading_element.dart';
 import 'package:housemanagement/widgets/drawer_widget.dart';
-import 'package:housemanagement/widgets/textFormFields/name_text_form_field_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/base_text_form_field_widget.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     return Text(
       "${DateFormat('yyyy-MM-dd').format(startDate)} - ${DateFormat('yyyy-MM-dd').format(endDate)}",
       style: const TextStyle(
-          color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+          color: AppColors.blackColor,
+          fontSize: 17,
+          fontWeight: FontWeight.bold),
     );
   }
 
@@ -56,10 +59,18 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   Widget build(BuildContext context) {
     final ShoppingListService _shoppingListService = ShoppingListService();
 
-    final shoppingListNameField = NameTextFormFieldWidget(
+    final shoppingListNameField = BaseTextFormFieldWidget(
         controller: shoppingListNameEditingController,
         hintText: 'Nazwa',
-        iconData: Icons.list);
+        prefixIcon: Icons.list,
+        textInputAction: TextInputAction.done,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Wprowadź nazwę.";
+          }
+
+          return null;
+        });
 
     final addButton = getSubmitButton(SubmitButtonWidget(
       onPressed: () async {
@@ -117,13 +128,13 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           const Text('Wybierz zakres:',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 17)),
+                              style: TextStyle(
+                                  color: AppColors.blackColor, fontSize: 17)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               const Icon(Icons.calendar_today,
-                                  color: Colors.indigo),
+                                  color: AppColors.primaryColor),
                               const SizedBox(width: 10),
                               getShortDate(),
                             ],
@@ -179,14 +190,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             clipBehavior: Clip.antiAlias,
-
             child: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                     icon: Icon(Icons.list_alt), label: 'Aktualne'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.checklist_rtl), label: 'Zaakceptowane'),
-                    
               ],
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/models/bill.dart';
 import 'package:housemanagement/services/bills_service.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
@@ -20,7 +21,7 @@ class _BillsListTileState extends State<BillsListTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: widget.bill.isPaid ? Colors.indigo[100] : null,
+      color: widget.bill.isPaid ? AppColors.primaryColorLight : null,
       child: ListTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -8,8 +8,11 @@ class HouseholdService {
   final householdCollection =
       FirebaseFirestore.instance.collection('households');
 
-  Stream<Household> get household {
-    return householdCollection.snapshots().map(_householdFromSnapshot);
+  Stream<Household> getHousehold(String uid) {
+    return householdCollection
+        .where('uIds', arrayContainsAny: [uid])
+        .snapshots()
+        .map(_householdFromSnapshot);
   }
 
   Household _householdFromSnapshot(QuerySnapshot snapshot) {

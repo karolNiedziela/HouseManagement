@@ -18,22 +18,27 @@ class ShoppingList {
       this.isDone = false});
 
   factory ShoppingList.fromMap(Map<String, dynamic> map) {
-    return ShoppingList(
+    var shoppingList = ShoppingList(
         name: map['name'],
         userUId: map['userUId'],
         userFullName: map['userFullName'],
         dateCreated: DateTime.parse(map['dateCreated']),
         isDone: map['isDone']);
-  }
-
-  factory ShoppingList.fromMapWithProducts(Map<String, dynamic> map) {
-    var shoppingList = ShoppingList.fromMap(map);
 
     shoppingList.products = (map['products'] as List)
         .map((product) => Product.fromMap(product))
         .toList();
     return shoppingList;
   }
+
+  // factory ShoppingList.fromMapWithProducts(Map<String, dynamic> map) {
+  //   var shoppingList = ShoppingList.fromMap(map);
+
+  //   shoppingList.products = (map['products'] as List)
+  //       .map((product) => Product.fromMap(product))
+  //       .toList();
+  //   return shoppingList;
+  // }
 
   Map<String, dynamic> toMap() {
     return {

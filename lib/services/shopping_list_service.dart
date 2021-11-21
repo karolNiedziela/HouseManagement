@@ -3,6 +3,7 @@ import 'package:housemanagement/models/product.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/services/user_service.dart';
+import 'package:intl/intl.dart';
 
 class ShoppingListService {
   final shoppingListCollection =
@@ -26,7 +27,7 @@ class ShoppingListService {
   List<ShoppingList> _shoppingListFromSnapshot(QuerySnapshot snapshot) {
     var shoppingLists = snapshot.docs.map((doc) {
       var shoppingList =
-          ShoppingList.fromMapWithProducts(doc.data() as Map<String, dynamic>);
+          ShoppingList.fromMap(doc.data() as Map<String, dynamic>);
       shoppingList.docId = doc.id;
       return shoppingList;
     }).toList();
@@ -67,8 +68,46 @@ class ShoppingListService {
     });
   }
 
+  Future productExists(String doicId, String name,
+      {String? previousName}) async {
+    var shoppingList = ShoppingList.fromMap(
+        (await shoppingListCollection.doc(doicId).get()).data()!);
+
+    if (previousName != null) {
+      if (shoppingList.products.any(
+          (product) => product.name == name && product.name != previousName)) {
+        return true;
+      }
+    } else {
+      if (shoppingList.products.any((product) => product.name == name)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Future updateProduct(
+      String documentId, String previousName, String name, int quantity) async {
+    var shoppingList = ShoppingList.fromMap(
+        (await shoppingListCollection.doc(documentId).get()).data()!);
+
+    shoppingList.products.map((product) {
+      if (product.name == previousName) {
+        product.name = name;
+        product.quantity = quantity;
+      }
+      return product;
+    }).toList();
+
+    await shoppingListCollection.doc(documentId).update({
+      'products':
+          shoppingList.products.map((product) => product.toMap()).toList()
+    });
+  }
+
   Future buyProduct(String documentId, String name) async {
-    var shoppingList = ShoppingList.fromMapWithProducts(
+    var shoppingList = ShoppingList.fromMap(
         (await shoppingListCollection.doc(documentId).get()).data()!);
 
     shoppingList.products.map((product) {
@@ -86,7 +125,7 @@ class ShoppingListService {
 
   Future setPriceOfProduct(
       String documentId, String productName, double price) async {
-    var shoppingList = ShoppingList.fromMapWithProducts(
+    var shoppingList = ShoppingList.fromMap(
         (await shoppingListCollection.doc(documentId).get()).data()!);
 
     shoppingList.products.map((product) {
@@ -113,5 +152,27 @@ class ShoppingListService {
 
   Future acceptShoppingList(String documentId) async {
     await shoppingListCollection.doc(documentId).update({'isDone': true});
+  }
+
+  Future<Map<String, double>> getMonthlyExpenses() async {
+    var shoppingLists =
+        (await shoppingListCollection.where('isDone', isEqualTo: true).get())
+            .docs
+            .map((doc) => ShoppingList.fromMap(doc.data()))
+            .toList();
+    var monthsToExpenses = <String, double>{};
+
+    for (var shoppingList in shoppingLists) {
+      var month = DateFormat.M().format(shoppingList.dateCreated);
+      var amountForProducts = shoppingList.products.fold<double>(
+          0, (sum, product) => sum + (product.price! * product.quantity));
+      if (monthsToExpenses.containsKey(month)) {
+        monthsToExpenses[month] = monthsToExpenses[month]! + amountForProducts;
+      } else {
+        monthsToExpenses[month] = amountForProducts;
+      }
+    }
+
+    return monthsToExpenses;
   }
 }

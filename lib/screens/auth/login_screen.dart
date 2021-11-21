@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
@@ -31,12 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final emailField =
-        EmailTextFormFieldWidget(controller: emailEditingController);
+    var emailField = EmailTextFormFieldWidget(
+      controller: emailEditingController,
+      textInputAction: TextInputAction.next,
+    );
 
     // password field
-    var passwordField =
-        PasswordTextFormFieldWidget(controller: passwordEditingController);
+    var passwordField = PasswordTextFormFieldWidget(
+      controller: passwordEditingController,
+      textInputAction: TextInputAction.done,
+    );
 
     final loginButton = getSubmitButton(SubmitButtonWidget(
       onPressed: () async {
@@ -66,56 +71,52 @@ class _LoginScreenState extends State<LoginScreen> {
     return loading
         ? const Loading()
         : Scaffold(
-            backgroundColor: Colors.grey[200],
             body: SingleChildScrollView(
-              child: Container(
-                color: Colors.grey[200],
-                child: Padding(
-                  padding: const EdgeInsets.all(36.0),
-                  child: Form(
-                      key: _formKey,
-                      child: Column(
+            child: Padding(
+              padding: const EdgeInsets.all(36.0),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      const StartTitleWidget(),
+                      emailField,
+                      passwordField,
+                      const SizedBox(height: 10),
+                      loginButton,
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const StartTitleWidget(),
-                          emailField,
-                          passwordField,
-                          const SizedBox(height: 10),
-                          loginButton,
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              const Text("Nie masz konta? ",
-                                  style: TextStyle(fontSize: 17)),
-                              GestureDetector(
-                                onTap: () {
-                                  widget.toggleView();
-                                },
-                                child: const Text("Zarejestruj się",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 17.0,
-                                        color: Colors.indigo)),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
-                              Text(
-                                'Zapomniałeś hasła?',
+                          const Text("Nie masz konta? ",
+                              style: TextStyle(fontSize: 17)),
+                          GestureDetector(
+                            onTap: () {
+                              widget.toggleView();
+                            },
+                            child: const Text("Zarejestruj się",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 17.0,
-                                    color: Colors.indigo),
-                              )
-                            ],
+                                    color: AppColors.primaryColor)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          Text(
+                            'Zapomniałeś hasła?',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 17.0,
+                                color: AppColors.primaryColor),
                           )
                         ],
-                      )),
-                ),
-              ),
-            ));
+                      )
+                    ],
+                  )),
+            ),
+          ));
   }
 }

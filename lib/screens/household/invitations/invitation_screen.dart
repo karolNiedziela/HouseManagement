@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:housemanagement/models/invitation.dart';
 import 'package:housemanagement/screens/household/invitations/invitation_list.dart';
 import 'package:housemanagement/services/user_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
+import 'package:housemanagement/validators/email_validator.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
-import 'package:housemanagement/widgets/drawer_widget.dart';
+import 'package:housemanagement/widgets/textFormFields/base_text_form_field_widget.dart';
 import 'package:provider/provider.dart';
 
 class InvitationScreen extends StatefulWidget {
   const InvitationScreen({Key? key}) : super(key: key);
 
   @override
-  _InvitationScreenState createState() => _InvitationScreenState();
+  State<InvitationScreen> createState() => _InvitationScreenState();
 }
 
 class _InvitationScreenState extends State<InvitationScreen> {
@@ -21,28 +23,28 @@ class _InvitationScreenState extends State<InvitationScreen> {
   // editing controller
   final TextEditingController emailEditingController = TextEditingController();
 
-  dynamic _validationMessage;
+  String? _validationMessage;
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextFormField(
-      autofocus: false,
+    final emailField = BaseTextFormFieldWidget(
       controller: emailEditingController,
-      keyboardType: TextInputType.emailAddress,
-      validator: (value) => _validationMessage,
-      onSaved: (value) {
-        emailEditingController.text = value!;
+      validator: (String? value) {
+        var result = EmailValidator.baseEmailValidator(value);
+        if (result != null) {
+          return result;
+        }
+
+        if (_validationMessage != null) {
+          return _validationMessage;
+        }
+        return null;
       },
-      textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.email),
-          hintText: 'Email',
-          errorMaxLines: 3,
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
-              borderRadius: BorderRadius.circular(15)),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+      prefixIcon: Icons.email,
+      hintText: 'Email',
+      textInputAction: TextInputAction.done,
+      keyboardType: TextInputType.emailAddress,
+      errorMaxLines: 3,
     );
 
     final addButton = getSubmitButton(SubmitButtonWidget(
@@ -57,55 +59,51 @@ class _InvitationScreenState extends State<InvitationScreen> {
       displayButtonText: 'Wyślij zaproszenie',
     ));
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Zaproszenia"),
-          centerTitle: true,
+    return Column(
+      children: [
+        Expanded(
+          child: StreamProvider<List<Invitation>>.value(
+              initialData: const [],
+              value: UserService().appUserInvitations,
+              child: const InvitationList()),
         ),
-        drawer: const DrawerWidget(),
-        body: StreamProvider<List<Invitation>>.value(
-            initialData: const [],
-            value: UserService().appUserInvitations,
-            child: const InvitationList()),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            FormDialog.showFormDialog(
-                context: context,
-                formContent: [
-                  emailField,
-                  const SizedBox(height: 10),
-                  addButton
-                ],
-                key: _formKey,
-                dialogHeader: "Zaproszenie");
-          },
-          child: const Icon(Icons.add),
-        ));
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: () async {
+                  FormDialog.showFormDialog(
+                      context: context,
+                      formContent: [
+                        emailField,
+                        const SizedBox(height: 10),
+                        addButton
+                      ],
+                      key: _formKey,
+                      dialogHeader: "Zaproszenie");
+                },
+                child: const Icon(Icons.add),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   Future emailValidator(String receiverEmail) async {
-    _validationMessage = null;
-    setState(() {});
-
-    if (receiverEmail.isEmpty) {
-      _validationMessage = 'Podaj adres email.';
-      setState(() {});
+    var message = await _userService.canSendFriendRequest(receiverEmail);
+    if (message == null) {
+      setState(() {
+        _validationMessage = null;
+      });
       return;
     }
 
-    // reg expression for email
-    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-        .hasMatch(receiverEmail)) {
-      _validationMessage = "Podaj prawidłowy adres email.";
-      setState(() {});
-      return;
-    }
-
-    bool isValid = await _userService.canSendFriendRequest(receiverEmail);
-
-    if (!isValid) {
-      _validationMessage = "Już wysłałeś zaproszenie do tej osoby.";
-      setState(() {});
-    }
+    setState(() {
+      _validationMessage = message;
+    });
   }
 }

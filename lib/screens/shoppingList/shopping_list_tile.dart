@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/models/shopping_list.dart';
+import 'package:housemanagement/core/routes.dart';
 
 class ShoppingListTile extends StatelessWidget {
   final ShoppingList shoppingList;
@@ -11,11 +13,11 @@ class ShoppingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/shoppinglistdetails',
+        Navigator.pushNamed(context, AppRoutes.shoppingListDetails,
             arguments: shoppingList);
       },
       child: Card(
-          color: Colors.indigo[100],
+          color: AppColors.primaryColorLight,
           semanticContainer: true,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

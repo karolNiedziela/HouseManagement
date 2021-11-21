@@ -4,14 +4,14 @@ import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/services/household_service.dart';
 import 'package:housemanagement/widgets/popup_menu_widget.dart';
 
-class HouseholdTestTab extends StatefulWidget {
-  const HouseholdTestTab({Key? key}) : super(key: key);
+class HouseholdTestScreen extends StatefulWidget {
+  const HouseholdTestScreen({Key? key}) : super(key: key);
 
   @override
-  State<HouseholdTestTab> createState() => _HouseholdTestTabState();
+  State<HouseholdTestScreen> createState() => _HouseholdTestScreenState();
 }
 
-class _HouseholdTestTabState extends State<HouseholdTestTab> {
+class _HouseholdTestScreenState extends State<HouseholdTestScreen> {
   final HouseholdService _householdService = HouseholdService();
 
   String fullName = '';
@@ -21,13 +21,12 @@ class _HouseholdTestTabState extends State<HouseholdTestTab> {
     final currentUserUId = AuthService().uid;
 
     return StreamBuilder(
-        stream: _householdService.household,
+        stream: _householdService.getHousehold(currentUserUId!),
         builder: (context, AsyncSnapshot<Household> snapshot) {
           switch (snapshot.connectionState) {
             default:
               return ListView.builder(
-                  itemCount:
-                      snapshot.hasData ? snapshot.data!.users.length : 0,
+                  itemCount: snapshot.hasData ? snapshot.data!.users.length : 0,
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
@@ -40,8 +39,7 @@ class _HouseholdTestTabState extends State<HouseholdTestTab> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                        snapshot.data!.users[index].fullName),
+                                    Text(snapshot.data!.users[index].fullName),
                                     const Icon(Icons.star_border)
                                   ],
                                 )
@@ -54,9 +52,9 @@ class _HouseholdTestTabState extends State<HouseholdTestTab> {
                                   snapshot.data!.users[index].isOwner == false
                               ? PopupMenuWidget(
                                   deleteAction: () async {
-                                    await _householdService
-                                        .removeFromHouseHold(currentUserUId!,
-                                            snapshot.data!.users[index].uid);
+                                    await _householdService.removeFromHouseHold(
+                                        currentUserUId,
+                                        snapshot.data!.users[index].uid);
                                   },
                                   isEditVisible: false)
                               : null),

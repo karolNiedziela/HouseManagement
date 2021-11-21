@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/models/invitation.dart';
 import 'package:housemanagement/services/user_service.dart';
 
@@ -13,9 +14,8 @@ class InvitationTile extends StatelessWidget {
     return ListTile(
       title: Text(
         invitation.senderFullName,
-        style: TextStyle(color: Colors.indigo[900], fontSize: 21.0),
+        style: const TextStyle(color: AppColors.primaryColor, fontSize: 21.0),
       ),
-      tileColor: Colors.indigo[200],
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -24,15 +24,16 @@ class InvitationTile extends StatelessWidget {
                 userService.changeFriendRequestStatus(
                     invitation.senderUId, InvitationStatus.accepted);
               },
-              icon: Icon(Icons.check, color: Colors.indigo[900], size: 25.0)),
+              icon: const Icon(Icons.check,
+                  color: AppColors.primaryColor, size: 25.0)),
           IconButton(
               onPressed: () {
                 userService.changeFriendRequestStatus(
                     invitation.senderUId, InvitationStatus.rejected);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.close,
-                color: Colors.indigo[900],
+                color: AppColors.primaryColor,
                 size: 25.0,
               ))
         ],

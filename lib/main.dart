@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:housemanagement/core/themes.dart';
 import 'package:housemanagement/models/app_user.dart';
-import 'package:housemanagement/screens/bills/bills_screen.dart';
-import 'package:housemanagement/screens/household/base_household_screen.dart';
-import 'package:housemanagement/screens/household/invitations/invitation_screen.dart';
-import 'package:housemanagement/screens/shoppingList/shopping_list_screen.dart';
-import 'package:housemanagement/screens/shoppingListDetails/shopping_list_details_screen.dart';
 import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/core/routes.dart';
 import 'package:housemanagement/utils/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -35,28 +32,9 @@ class MyApp extends StatelessWidget {
           supportedLocales: const [
             Locale('pl', 'PL'),
           ],
-          routes: {
-            '/household': (context) => const BaseHouseholdScreen(),
-            '/invitations': (context) => const InvitationScreen(),
-            '/shoppinglist': (context) => const ShoppingListScreen(),
-            '/shoppinglistdetails': (context) =>
-                const ShoppingListDetailsScreen(),
-            '/bills': (context) => const BillsScreen()
-          },
+          onGenerateRoute: AppRoutes.onGenerateRoute,
           title: 'House management',
-          theme: ThemeData(
-            primarySwatch: Colors.indigo,
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.indigo),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                backgroundColor: Colors.indigo),
-            bottomAppBarTheme:
-                const BottomAppBarTheme(shape: CircularNotchedRectangle()),
-            bottomNavigationBarTheme: BottomNavigationBarThemeData(
-              selectedItemColor: Colors.indigoAccent,
-              unselectedItemColor: Colors.black,
-              backgroundColor: Colors.indigo[100],
-            ),
-          ),
+          theme: AppThemes.defaultTheme,
           home: const AuthWrapper(),
         ));
   }

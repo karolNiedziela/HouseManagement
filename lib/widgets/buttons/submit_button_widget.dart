@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 
 class SubmitButtonWidget extends StatefulWidget {
   final Function onPressed;
@@ -22,7 +23,7 @@ class _SubmitButtonWidgetState extends State<SubmitButtonWidget> {
       child: Text(widget.displayButtonText,
           textAlign: TextAlign.center,
           style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               fontWeight: FontWeight.bold,
               fontSize: 20,
               letterSpacing: 2.0)),
