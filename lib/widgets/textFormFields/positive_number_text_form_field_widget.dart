@@ -25,7 +25,7 @@ class PositiveNumberTextFormFieldWidget extends StatelessWidget {
               return "Wprowadź ${hintText.toLowerCase()}.";
             }
 
-            if (int.parse(value) <= 0) {
+            if (double.parse(value) <= 0) {
               return "Wprowadź dodatnią liczbę.";
             }
 

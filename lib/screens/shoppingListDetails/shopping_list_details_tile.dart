@@ -41,7 +41,23 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
   String? _validationMessage;
 
   @override
-  void initState() {
+  Widget build(BuildContext context) {
+    nameField = BaseTextFormFieldWidget(
+        controller: nameTextEditingController,
+        hintText: 'Nazwa',
+        prefixIcon: Icons.shopping_bag,
+        textInputAction: TextInputAction.done,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Wprowadź nazwę.";
+          }
+
+          if (_validationMessage != null) {
+            return _validationMessage;
+          }
+          return null;
+        });
+
     priceField = PositiveNumberTextFormFieldWidget(
         controller: priceTextEditingController, hintText: 'Cena');
 
@@ -83,11 +99,6 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
         },
         displayButtonText: 'Edytuj'));
 
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Card(
         color: widget.product.isBought ? AppColors.primaryColorLight : null,
         child: ListTile(
@@ -116,8 +127,18 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
               : null,
           trailing: _buildTrailing(),
           onTap: () async {
-            await _shoppingListService.buyProduct(
-                widget.docId, widget.product.name);
+            if (widget.product.isBought) {
+              FormDialog.showConfirmDeleteDialog(
+                  context: context,
+                  onYesPressed: () async {
+                    await _shoppingListService.buyOrUndoProduct(widget.docId,
+                        widget.product.name, widget.product.isBought);
+                  },
+                  text: "Na pewno chcesz cofnąć zakup produktu?");
+            } else {
+              await _shoppingListService.buyOrUndoProduct(
+                  widget.docId, widget.product.name, widget.product.isBought);
+            }
           },
         ));
   }
@@ -129,19 +150,7 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
 
     if (widget.product.isBought) {
       return PopupMenuWidget(
-        editAction: () {
-          setState(() {
-            nameTextEditingController.text = widget.product.name;
-            quantityTextEditingController.text =
-                widget.product.quantity.toString();
-          });
-
-          FormDialog.showFormDialog(
-              context: context,
-              formContent: [nameField, quantityField, editSubmitButton],
-              key: _editFormKey,
-              dialogHeader: "Edytuj");
-        },
+        isEditVisible: false,
         deleteAction: () async {
           await _shoppingListService.deleteProduct(
               widget.docId, widget.product);
@@ -159,7 +168,19 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
         ],
       );
     } else {
-      return PopupMenuWidget(deleteAction: () async {
+      return PopupMenuWidget(editAction: () {
+        setState(() {
+          nameTextEditingController.text = widget.product.name;
+          quantityTextEditingController.text =
+              widget.product.quantity.toString();
+        });
+
+        FormDialog.showFormDialog(
+            context: context,
+            formContent: [nameField, quantityField, editSubmitButton],
+            key: _editFormKey,
+            dialogHeader: "Edytuj");
+      }, deleteAction: () async {
         await _shoppingListService.deleteProduct(widget.docId, widget.product);
       });
     }

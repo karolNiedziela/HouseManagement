@@ -106,17 +106,27 @@ class ShoppingListService {
     });
   }
 
-  Future buyProduct(String documentId, String name) async {
+  Future buyOrUndoProduct(String documentId, String name, bool isBought) async {
     var shoppingList = ShoppingList.fromMap(
         (await shoppingListCollection.doc(documentId).get()).data()!);
-
     shoppingList.products.map((product) {
       if (product.name == name) {
-        product.isBought = true;
+        product.isBought = false;
+        product.price = null;
       }
       return product;
     }).toList();
 
+    if (isBought) {
+    } else {
+      shoppingList.products.map((product) {
+        if (product.name == name) {
+          product.isBought = true;
+        }
+        return product;
+      }).toList();
+    }
+    
     await shoppingListCollection.doc(documentId).update({
       'products':
           shoppingList.products.map((product) => product.toMap()).toList()

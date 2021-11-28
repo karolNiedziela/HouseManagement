@@ -46,12 +46,16 @@ class BillsService {
     ref.set(bill.toMap());
   }
 
-  Future<Bill> payBill(String key) async {
+  Future<Bill> payOrUndoBill(String key, bool isPaid) async {
     var snapshot = await billsCollection.doc(key).get();
 
     var bill = Bill.fromMap(snapshot.data()!);
 
-    bill.isPaid = true;
+    if (isPaid) {
+      bill.isPaid = false;
+    } else {
+      bill.isPaid = true;
+    }
 
     await billsCollection.doc(key).update(bill.toMap());
 
@@ -69,7 +73,7 @@ class BillsService {
         .toList();
     var monthsToExpenses = <String, double>{};
 
-    for (var bill in bills) {
+    for (var bill in bills.where((bill) => bill.isPaid)) {
       var month = DateFormat.M().format(bill.dateOfPayment);
       var amountForBills =
           bills.fold<double>(0, (sum, bill) => sum + (bill.amount));
@@ -81,5 +85,11 @@ class BillsService {
     }
 
     return monthsToExpenses;
+  }
+
+  Future updateBill(String documentId, String name, String serviceProvider,
+      double amount) async {
+    await billsCollection.doc(documentId).update(
+        {'name': name, 'serviceProvider': serviceProvider, 'amount': amount});
   }
 }

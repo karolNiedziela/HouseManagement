@@ -9,7 +9,6 @@ import 'package:housemanagement/services/bills_service.dart';
 import 'package:housemanagement/services/household_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
-import 'package:housemanagement/utils/loading_element.dart';
 import 'package:housemanagement/widgets/buttons/submit_button_widget.dart';
 import 'package:housemanagement/widgets/drawer_widget.dart';
 import 'package:housemanagement/widgets/textFormFields/base_text_form_field_widget.dart';
@@ -114,106 +113,100 @@ class _BillsScreenState extends State<BillsScreen> {
         ),
         resizeToAvoidBottomInset: false,
         drawer: const DrawerWidget(),
-        body: FutureBuilder(
-            future: HouseholdService().getUserIds(),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('');
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  return StreamBuilder(
-                      stream: _billsService.getAllBills(snapshot.data!),
-                      builder: (context, AsyncSnapshot<List<Bill>> snapshot) {
-                        if (snapshot.hasData) {
-                          final bills = snapshot.data;
-                          _groupBills(bills!);
-                          DateTime selectedDate = _selectedDay!;
-                          final _selectedBills =
-                              _groupedBills[selectedDate] ?? [];
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Card(
-                                clipBehavior: Clip.antiAlias,
-                                margin: const EdgeInsets.all(8.0),
-                                child: TableCalendar(
-                                  rowHeight: 70,
-                                  focusedDay: _focusedDay,
-                                  selectedDayPredicate: (day) =>
-                                      isSameDay(_selectedDay, day),
-                                  firstDay: firstDay,
-                                  lastDay: lastDay,
-                                  eventLoader: _getBillsForDay,
-                                  onDaySelected: (selectedDay, focusedDay) {
-                                    setState(() {
-                                      _selectedDay = selectedDay;
-                                      _focusedDay = focusedDay;
-                                    });
-                                  },
-                                  startingDayOfWeek: StartingDayOfWeek.monday,
-                                  calendarFormat: _calendarFormat,
-                                  availableCalendarFormats: const {
-                                    CalendarFormat.month: 'Month'
-                                  },
-                                  calendarStyle: const CalendarStyle(
-                                      defaultTextStyle: TextStyle(fontSize: 20),
-                                      weekendTextStyle:
-                                          TextStyle(fontSize: 20)),
-                                  calendarBuilders: CalendarBuilders(
-                                    markerBuilder: (context, date, events) {
-                                      if (events.isNotEmpty) {
-                                        return Positioned(
-                                          bottom: 1,
-                                          right: 1,
-                                          child: _buildEventsMarker(
-                                              date, _groupedBills[date]!),
-                                        );
-                                      }
-                                      return const Text('');
-                                    },
-                                  ),
-                                  onDayLongPressed:
-                                      (DateTime startDate, DateTime endDate) {
-                                    setState(() {
-                                      dateOfPaymentEditingController.text =
-                                          DateFormat('yyyy-MM-dd')
-                                              .format(startDate);
-                                    });
-
-                                    FormDialog.showFormDialog(
-                                        context: context,
-                                        formContent: [
-                                          billNameField,
-                                          serviceProviderNameField,
-                                          amountField,
-                                          dateOfPaymentField,
-                                          addButton
-                                        ],
-                                        key: _formKey,
-                                        dialogHeader: 'Rachunek');
-                                  },
-                                ),
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _selectedBills.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return BillsListTile(
-                                      bill: _selectedBills[index]);
+        body: StreamBuilder(
+          stream: Stream.fromFuture(HouseholdService().getUserIds()),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+            if (snapshot.hasData) {
+              return StreamBuilder(
+                  stream: _billsService.getAllBills(snapshot.data!),
+                  builder: (context, AsyncSnapshot<List<Bill>> snapshot) {
+                    if (snapshot.hasData) {
+                      final bills = snapshot.data;
+                      _groupBills(bills!);
+                      DateTime selectedDate = _selectedDay!;
+                      final _selectedBills = _groupedBills[selectedDate] ?? [];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Card(
+                            clipBehavior: Clip.antiAlias,
+                            margin: const EdgeInsets.all(8.0),
+                            child: TableCalendar(
+                              rowHeight: 70,
+                              focusedDay: _focusedDay,
+                              selectedDayPredicate: (day) =>
+                                  isSameDay(_selectedDay, day),
+                              firstDay: firstDay,
+                              lastDay: lastDay,
+                              eventLoader: _getBillsForDay,
+                              onDaySelected: (selectedDay, focusedDay) {
+                                setState(() {
+                                  _selectedDay = selectedDay;
+                                  _focusedDay = focusedDay;
+                                });
+                              },
+                              startingDayOfWeek: StartingDayOfWeek.monday,
+                              calendarFormat: _calendarFormat,
+                              availableCalendarFormats: const {
+                                CalendarFormat.month: 'Month'
+                              },
+                              calendarStyle: const CalendarStyle(
+                                  defaultTextStyle: TextStyle(fontSize: 20),
+                                  weekendTextStyle: TextStyle(fontSize: 20)),
+                              calendarBuilders: CalendarBuilders(
+                                markerBuilder: (context, date, events) {
+                                  if (events.isNotEmpty) {
+                                    return Positioned(
+                                      bottom: 1,
+                                      right: 1,
+                                      child: _buildEventsMarker(
+                                          date, _groupedBills[date]!),
+                                    );
+                                  }
+                                  return const Text('');
                                 },
                               ),
-                            ],
-                          );
-                        }
-                        return const Text('');
-                      });
-                }
-              }
-              return const Text('');
-            }),
+                              onDayLongPressed:
+                                  (DateTime startDate, DateTime endDate) {
+                                setState(() {
+                                  dateOfPaymentEditingController.text =
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(startDate);
+                                });
+
+                                FormDialog.showFormDialog(
+                                    context: context,
+                                    formContent: [
+                                      billNameField,
+                                      serviceProviderNameField,
+                                      amountField,
+                                      dateOfPaymentField,
+                                      addButton
+                                    ],
+                                    key: _formKey,
+                                    dialogHeader: 'Rachunek');
+                              },
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _selectedBills.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return BillsListTile(bill: _selectedBills[index]);
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                    return const Text('');
+                  });
+            }
+
+            return const Text('');
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           child: const Text(''),
           backgroundColor: Colors.transparent,
