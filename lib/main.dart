@@ -35,6 +35,8 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: AppRoutes.onGenerateRoute,
           title: 'House management',
           theme: AppThemes.defaultTheme,
+          darkTheme: AppThemes.darkTheme,
+          themeMode: ThemeMode.dark, 
           home: const AuthWrapper(),
         ));
   }

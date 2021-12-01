@@ -79,11 +79,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             alignment: Alignment.bottomCenter,
             child: Column(
               children: <Widget>[
-                const ListTile(
+                ListTile(
                   leading: Icon(Icons.settings, color: AppColors.primaryColor),
                   title: Text('Ustawienia',
                       style: TextStyle(
                           color: AppColors.primaryColor, fontSize: 15)),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, AppRoutes.user_settings);
+                  },        
                 ),
                 ListTile(
                   leading: const Icon(

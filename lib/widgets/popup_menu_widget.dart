@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 
 class PopupMenuWidget extends StatefulWidget {
@@ -22,6 +23,7 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+      icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color,),
       itemBuilder: (context) => <PopupMenuEntry>[
         ...getAdditionalItems(),
         ...getDefaultMenuItems(),
