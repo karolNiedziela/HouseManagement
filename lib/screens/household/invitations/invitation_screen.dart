@@ -57,6 +57,7 @@ class _InvitationScreenState extends State<InvitationScreen> {
         }
       },
       displayButtonText: 'Wyślij zaproszenie',
+      context: context,
     ));
 
     return Column(

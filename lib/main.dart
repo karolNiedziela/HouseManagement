@@ -27,17 +27,26 @@ class MyApp extends StatelessWidget {
     return StreamProvider<AppUser?>.value(
         value: AuthService().appUser,
         initialData: null,
-        child: MaterialApp(
-          localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
-          supportedLocales: const [
-            Locale('pl', 'PL'),
-          ],
-          onGenerateRoute: AppRoutes.onGenerateRoute,
-          title: 'House management',
-          theme: AppThemes.defaultTheme,
-          darkTheme: AppThemes.darkTheme,
-          themeMode: ThemeMode.dark, 
-          home: const AuthWrapper(),
+        child: ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+          builder: (context, _) {
+            final themeProvider = Provider.of<ThemeProvider>(context);
+
+            return MaterialApp(
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate
+              ],
+              supportedLocales: const [
+                Locale('pl', 'PL'),
+              ],
+              onGenerateRoute: AppRoutes.onGenerateRoute,
+              title: 'House management',
+              theme: AppThemes.defaultTheme,
+              darkTheme: AppThemes.darkTheme,
+              themeMode: themeProvider.themeMode,
+              home: const AuthWrapper(),
+            );
+          },
         ));
   }
 }

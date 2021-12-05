@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
@@ -92,6 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       },
       displayButtonText: 'Zarejestruj się',
+      context: context,
     ));
 
     return loading
@@ -102,10 +102,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: AppColors.primaryColor,
-                ),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).primaryColor),
                 onPressed: () {
                   widget.toggleView();
                 },

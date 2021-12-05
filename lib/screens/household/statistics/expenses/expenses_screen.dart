@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
 import 'package:housemanagement/screens/household/statistics/expenses/bills/bills_expenses_screen.dart';
 import 'package:housemanagement/screens/household/statistics/expenses/shoppingList/shopping_list_expenses_screen.dart';
 
@@ -38,18 +38,18 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         Expanded(
           flex: 1,
           child: Container(
-            color: AppColors.primaryColorLight,
+            color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             child: TabBar(
               controller: _tabController,
               tabs: expensesTabs
                   .map((tab) => Center(
                         child: Text(
                           "${tab.text}",
-                          style: const TextStyle(color: AppColors.blackColor),
+                          style:
+                              const TextStyle(color: AppBaseColors.blackColor),
                         ),
                       ))
                   .toList(),
-              labelColor: AppColors.primaryColor,
             ),
           ),
         ),

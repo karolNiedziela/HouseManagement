@@ -43,7 +43,7 @@ class BaseTextFormFieldWidget extends StatelessWidget {
             controller.text = value!;
           },
           textInputAction: textInputAction,
-          decoration: getInputDecoration(prefixIcon, hintText,
+          decoration: getInputDecoration(context, prefixIcon, hintText,
               errorMaxLines: errorMaxLines)),
     );
   }

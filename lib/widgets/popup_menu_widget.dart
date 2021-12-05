@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/utils/form_dialog.dart';
 
 class PopupMenuWidget extends StatefulWidget {
@@ -7,12 +6,14 @@ class PopupMenuWidget extends StatefulWidget {
   final bool isEditVisible;
   final VoidCallback? deleteAction;
   final List<AdditionalPopupMenuItem>? additionalPopupMenuItems;
+  final bool isAppBar;
   const PopupMenuWidget(
       {Key? key,
       this.editAction,
       this.isEditVisible = true,
       this.deleteAction,
-      this.additionalPopupMenuItems})
+      this.additionalPopupMenuItems,
+      this.isAppBar = false})
       : super(key: key);
 
   @override
@@ -23,7 +24,13 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color,),
+      icon: widget.isAppBar
+          ? const Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            )
+          : Icon(Icons.more_vert,
+              color: Theme.of(context).textTheme.bodyText1!.color),
       itemBuilder: (context) => <PopupMenuEntry>[
         ...getAdditionalItems(),
         ...getDefaultMenuItems(),

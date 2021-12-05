@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
 
 class SubmitButtonWidget extends StatefulWidget {
   final Function onPressed;
   final String displayButtonText;
+  final BuildContext context;
 
   const SubmitButtonWidget(
-      {Key? key, required this.onPressed, required this.displayButtonText})
+      {Key? key,
+      required this.onPressed,
+      required this.displayButtonText,
+      required this.context})
       : super(key: key);
 
   @override
@@ -16,17 +19,21 @@ class SubmitButtonWidget extends StatefulWidget {
 class _SubmitButtonWidgetState extends State<SubmitButtonWidget> {
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-      minWidth: MediaQuery.of(context).size.width,
-      onPressed: () => widget.onPressed(),
-      child: Text(widget.displayButtonText,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              color: AppColors.whiteColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              letterSpacing: 2.0)),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: TextButton(
+        style: ButtonStyle(
+          padding: MaterialStateProperty.resolveWith((states) {
+            return const EdgeInsets.fromLTRB(20, 15, 20, 15);
+          }),
+        ),
+        onPressed: () => widget.onPressed(),
+        child: Text(widget.displayButtonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.button!.color,
+            )),
+      ),
     );
   }
 }

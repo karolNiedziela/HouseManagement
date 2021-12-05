@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/screens/shoppingList/shopping_list_list.dart';
 import 'package:housemanagement/services/household_service.dart';
@@ -33,8 +33,8 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   Widget getShortDate() {
     return Text(
       "${DateFormat('yyyy-MM-dd').format(startDate)} - ${DateFormat('yyyy-MM-dd').format(endDate)}",
-      style: const TextStyle(
-          color: AppColors.blackColor,
+      style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
           fontSize: 17,
           fontWeight: FontWeight.bold),
     );
@@ -82,12 +82,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         }
       },
       displayButtonText: 'Dodaj',
+      context: context,
     ));
 
     return Scaffold(
         appBar: AppBar(
           title: const Text("Listy zakupów"),
-          centerTitle: true,
         ),
         drawer: const DrawerWidget(),
         extendBody: true,
@@ -115,7 +115,22 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                             initialDateRange:
                                 DateTimeRange(start: startDate, end: endDate),
                             initialEntryMode: DatePickerEntryMode.inputOnly,
-                            locale: const Locale('pl', 'PL')));
+                            locale: const Locale('pl', 'PL'),
+                            builder: (context, Widget? child) => Theme(
+                                data: Theme.of(context).copyWith(
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      labelStyle: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      hintStyle: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    textTheme: const TextTheme(
+                                      subtitle1: TextStyle(
+                                          color: AppBaseColors.blackColor),
+                                    )),
+                                child: child!)));
 
                         if (picked != null) {
                           setState(() {
@@ -127,14 +142,18 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          const Text('Wybierz zakres:',
+                          Text('Wybierz zakres:',
                               style: TextStyle(
-                                  color: AppColors.blackColor, fontSize: 17)),
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
+                                  fontSize: 17)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              const Icon(Icons.calendar_today,
-                                  color: AppColors.primaryColor),
+                              Icon(Icons.calendar_today,
+                                  color: Theme.of(context).primaryColor),
                               const SizedBox(width: 10),
                               getShortDate(),
                             ],

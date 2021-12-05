@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
 
 class ShoppingListExpensesScreen extends StatefulWidget {
@@ -85,17 +86,20 @@ class _ShoppingListExpensesScreenState
                                         },
                                         touchTooltipData: BarTouchTooltipData(
                                             tooltipBgColor:
-                                                AppColors.primaryColorLight,
+                                                Theme.of(context).primaryColor,
                                             getTooltipItem: (
                                               BarChartGroupData group,
                                               int groupIndex,
                                               BarChartRodData rod,
                                               int rodIndex,
                                             ) {
-                                              const textStyle = TextStyle(
-                                                color: AppColors.blackColor,
+                                              final textStyle = TextStyle(
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1!
+                                                    .color,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 14,
+                                                fontSize: AppFontSizes.normal,
                                               );
                                               return BarTooltipItem(
                                                   rod.y.toString(), textStyle);
@@ -106,9 +110,13 @@ class _ShoppingListExpensesScreenState
                                         topTitles: SideTitles(
                                           showTitles: true,
                                           getTextStyles: (context, value) =>
-                                              const TextStyle(
-                                                  color: AppColors.blackColor,
-                                                  fontSize: 14),
+                                              TextStyle(
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
+                                                      .color,
+                                                  fontSize:
+                                                      AppFontSizes.normal),
                                           margin: 20,
                                           rotateAngle: 0,
                                           getTitles: (double value) {
@@ -147,9 +155,12 @@ class _ShoppingListExpensesScreenState
                                         leftTitles: SideTitles(
                                           showTitles: true,
                                           getTextStyles: (context, value) =>
-                                              const TextStyle(
-                                                  color: AppColors.blackColor,
-                                                  fontSize: 10),
+                                              TextStyle(
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
+                                                      .color,
+                                                  fontSize: AppFontSizes.small),
                                           rotateAngle: 0,
                                           getTitles: (double value) {
                                             if (value == 0) {
@@ -164,9 +175,12 @@ class _ShoppingListExpensesScreenState
                                         rightTitles: SideTitles(
                                           showTitles: true,
                                           getTextStyles: (context, value) =>
-                                              const TextStyle(
-                                                  color: AppColors.blackColor,
-                                                  fontSize: 10),
+                                              TextStyle(
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
+                                                      .color,
+                                                  fontSize: AppFontSizes.small),
                                           rotateAngle: 0,
                                           getTitles: (double value) {
                                             if (value == 0) {
@@ -229,9 +243,9 @@ class _ShoppingListExpensesScreenState
                   BarChartRodStackItem(
                       0,
                       value,
-                      AppColors.primaryColor,
+                      Theme.of(context).primaryColor,
                       BorderSide(
-                          color: AppColors.whiteColor,
+                          color: AppBaseColors.whiteColor,
                           width: touchedIndex == 3 ? 2 : 0)),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 import 'package:housemanagement/models/product.dart';
 import 'package:housemanagement/services/shopping_list_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
@@ -62,45 +63,48 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
         controller: priceTextEditingController, hintText: 'Cena');
 
     submitButton = getSubmitButton(SubmitButtonWidget(
-        onPressed: () async {
-          await _shoppingListService.setPriceOfProduct(
-              widget.docId,
-              widget.product.name,
-              double.parse(priceTextEditingController.text));
-          Navigator.of(context).pop();
-        },
-        displayButtonText: 'Dodaj'));
+      onPressed: () async {
+        await _shoppingListService.setPriceOfProduct(widget.docId,
+            widget.product.name, double.parse(priceTextEditingController.text));
+        Navigator.of(context).pop();
+      },
+      displayButtonText: 'Dodaj',
+      context: context,
+    ));
 
     quantityField = PositiveNumberTextFormFieldWidget(
         controller: quantityTextEditingController, hintText: "Ilość");
 
     editSubmitButton = getSubmitButton(SubmitButtonWidget(
-        onPressed: () async {
-          if (await _shoppingListService.productExists(
-              widget.docId, nameTextEditingController.text,
-              previousName: widget.product.name)) {
-            setState(() {
-              _validationMessage =
-                  "Produkt o podanej nazwie już jest na liście.";
-            });
-          } else {
-            setState(() {
-              _validationMessage = null;
-            });
-          }
-          if (_editFormKey.currentState!.validate()) {
-            await _shoppingListService.updateProduct(
-                widget.docId,
-                widget.product.name,
-                nameTextEditingController.text,
-                int.parse(quantityTextEditingController.text));
-            Navigator.of(context).pop();
-          }
-        },
-        displayButtonText: 'Edytuj'));
+      onPressed: () async {
+        if (await _shoppingListService.productExists(
+            widget.docId, nameTextEditingController.text,
+            previousName: widget.product.name)) {
+          setState(() {
+            _validationMessage = "Produkt o podanej nazwie już jest na liście.";
+          });
+        } else {
+          setState(() {
+            _validationMessage = null;
+          });
+        }
+        if (_editFormKey.currentState!.validate()) {
+          await _shoppingListService.updateProduct(
+              widget.docId,
+              widget.product.name,
+              nameTextEditingController.text,
+              int.parse(quantityTextEditingController.text));
+          Navigator.of(context).pop();
+        }
+      },
+      displayButtonText: 'Edytuj',
+      context: context,
+    ));
 
     return Card(
-        color: widget.product.isBought ? AppColors.primaryColorLight : null,
+        color: widget.product.isBought
+            ? Theme.of(context).bottomNavigationBarTheme.backgroundColor
+            : null,
         child: ListTile(
           dense: true,
           title: Row(
@@ -108,13 +112,13 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
             children: <Widget>[
               Text(widget.product.name,
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: AppFontSizes.big,
                       decoration: widget.product.isBought
                           ? TextDecoration.lineThrough
                           : null)),
               Text(
                 "${widget.product.quantity}",
-                style: const TextStyle(fontSize: 17),
+                style: const TextStyle(fontSize: AppFontSizes.big),
               ),
             ],
           ),
@@ -122,7 +126,8 @@ class _ShoppingListDetailsTileState extends State<ShoppingListDetailsTile> {
               ? Text(
                   "Zapłacano: ${widget.product.price != null ? widget.product.price! * widget.product.quantity : ''}zł",
                   style: const TextStyle(
-                      fontSize: 14, color: AppColors.blackColor),
+                      fontSize: AppFontSizes.normal,
+                      color: AppBaseColors.blackColor),
                 )
               : null,
           trailing: _buildTrailing(),

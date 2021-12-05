@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
@@ -66,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       displayButtonText: 'Zaloguj się',
+      context: context,
     ));
 
     return loading
@@ -87,32 +87,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text("Nie masz konta? ",
-                              style: TextStyle(fontSize: 17)),
+                          const Text(
+                            "Nie masz konta? ",
+                          ),
                           GestureDetector(
                             onTap: () {
                               widget.toggleView();
                             },
-                            child: const Text("Zarejestruj się",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 17.0,
-                                    color: AppColors.primaryColor)),
+                            child: const Text(
+                              "Zarejestruj się",
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[
-                          Text(
-                            'Zapomniałeś hasła?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 17.0,
-                                color: AppColors.primaryColor),
-                          )
-                        ],
+                        children: const <Widget>[Text('Zapomniałeś hasła?')],
                       )
                     ],
                   )),

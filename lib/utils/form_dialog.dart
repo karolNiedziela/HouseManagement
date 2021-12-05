@@ -10,8 +10,14 @@ class FormDialog {
         context: context,
         builder: (context) {
           return AlertDialog(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             scrollable: true,
-            title: Center(child: Text(dialogHeader)),
+            title: Center(
+                child: Text(
+              dialogHeader,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color),
+            )),
             content: Form(
                 key: key,
                 child: Column(
@@ -29,10 +35,17 @@ class FormDialog {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Potwierdź'),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            title: Text('Potwierdź',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color)),
             content: text.isEmpty
-                ? const Text('Jesteś pewien, że chcesz usunąć?')
-                : Text(text),
+                ? Text('Jesteś pewien, że chcesz usunąć?',
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color))
+                : Text(text,
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color)),
             actions: [
               TextButton(
                   onPressed: () {
@@ -43,7 +56,7 @@ class FormDialog {
                   },
                   child: const Text(
                     'Tak',
-                    style: TextStyle(color: Colors.red, fontSize: 15),
+                    style: TextStyle(color: Colors.red),
                   )),
               TextButton(
                   onPressed: () {
@@ -51,7 +64,6 @@ class FormDialog {
                   },
                   child: const Text(
                     'Nie',
-                    style: TextStyle(fontSize: 15),
                   ))
             ],
           );

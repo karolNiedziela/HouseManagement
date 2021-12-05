@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 import 'package:housemanagement/models/shopping_list.dart';
 import 'package:housemanagement/core/routes.dart';
 
@@ -17,7 +17,6 @@ class ShoppingListTile extends StatelessWidget {
             arguments: shoppingList);
       },
       child: Card(
-          color: AppColors.primaryColorLight,
           semanticContainer: true,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -30,17 +29,36 @@ class ShoppingListTile extends StatelessWidget {
               children: <Widget>[
                 Center(
                   child: Text(shoppingList.name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 17.0)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppFontSizes.big,
+                          color: Theme.of(context).textTheme.bodyText1!.color)),
                 ),
-                Text(shoppingList.userFullName),
+                Text(
+                  shoppingList.userFullName,
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1!.color),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     shoppingList.products.isEmpty
-                        ? const Text('Brak produktów')
+                        ? Text(
+                            'Brak produktów',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .color),
+                          )
                         : Text(
-                            "${shoppingList.products.where((product) => product.isBought).toList().length} / ${shoppingList.products.length.toString()}")
+                            "${shoppingList.products.where((product) => product.isBought).toList().length} / ${shoppingList.products.length.toString()}",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .color),
+                          )
                   ],
                 )
               ],

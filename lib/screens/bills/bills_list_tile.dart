@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
 import 'package:housemanagement/models/bill.dart';
 import 'package:housemanagement/services/bills_service.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
@@ -68,7 +67,8 @@ class _BillsListTileState extends State<BillsListTile> {
       child: TextFormField(
         autofocus: false,
         controller: dateOfPaymentEditingController,
-        decoration: getInputDecoration(Icons.calendar_today, 'Data zapłaty'),
+        decoration:
+            getInputDecoration(context, Icons.calendar_today, 'Data zapłaty'),
         readOnly: true,
       ),
     );
@@ -79,20 +79,24 @@ class _BillsListTileState extends State<BillsListTile> {
         iconData: Icons.price_change);
 
     editButton = getSubmitButton(SubmitButtonWidget(
-        onPressed: () async {
-          if (_editFormKey.currentState!.validate()) {
-            await _billsService.updateBill(
-                widget.bill.key,
-                billNameEditingController.text,
-                serviceProviderEditingController.text,
-                double.parse(amountEditingController.text));
-            Navigator.of(context).pop();
-          }
-        },
-        displayButtonText: 'Dodaj'));
+      onPressed: () async {
+        if (_editFormKey.currentState!.validate()) {
+          await _billsService.updateBill(
+              widget.bill.key,
+              billNameEditingController.text,
+              serviceProviderEditingController.text,
+              double.parse(amountEditingController.text));
+          Navigator.of(context).pop();
+        }
+      },
+      displayButtonText: 'Dodaj',
+      context: context,
+    ));
 
     return Card(
-      color: widget.bill.isPaid ? AppColors.primaryColorLight : null,
+      color: widget.bill.isPaid
+          ? Theme.of(context).bottomNavigationBarTheme.backgroundColor
+          : null,
       child: ListTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -77,6 +77,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
         }
       },
       displayButtonText: 'Dodaj',
+      context: context,
     ));
 
     return Scaffold(
@@ -151,12 +152,14 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       return PopupMenuWidget(
         deleteAction: _deleteAction,
         isEditVisible: false,
+        isAppBar: true,
       );
     }
 
     return PopupMenuWidget(
       deleteAction: _deleteAction,
       isEditVisible: false,
+      isAppBar: true,
       additionalPopupMenuItems: [
         AdditionalPopupMenuItem(
             onTap: () {

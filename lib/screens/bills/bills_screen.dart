@@ -2,7 +2,8 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 import 'package:housemanagement/models/bill.dart';
 import 'package:housemanagement/screens/bills/bills_list_tile.dart';
 import 'package:housemanagement/services/bills_service.dart';
@@ -83,7 +84,8 @@ class _BillsScreenState extends State<BillsScreen> {
       child: TextFormField(
         autofocus: false,
         controller: dateOfPaymentEditingController,
-        decoration: getInputDecoration(Icons.calendar_today, 'Data zapłaty'),
+        decoration:
+            getInputDecoration(context, Icons.calendar_today, 'Data zapłaty'),
         readOnly: true,
       ),
     );
@@ -94,17 +96,19 @@ class _BillsScreenState extends State<BillsScreen> {
         iconData: Icons.price_change);
 
     final addButton = getSubmitButton(SubmitButtonWidget(
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            await _billsService.addBill(
-                billNameEditingController.text,
-                serviceProviderEditingController.text,
-                double.parse(amountEditingController.text),
-                dateOfPaymentEditingController.text);
-            Navigator.of(context).pop();
-          }
-        },
-        displayButtonText: 'Dodaj'));
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          await _billsService.addBill(
+              billNameEditingController.text,
+              serviceProviderEditingController.text,
+              double.parse(amountEditingController.text),
+              dateOfPaymentEditingController.text);
+          Navigator.of(context).pop();
+        }
+      },
+      displayButtonText: 'Dodaj',
+      context: context,
+    ));
 
     return Scaffold(
         appBar: AppBar(
@@ -133,7 +137,30 @@ class _BillsScreenState extends State<BillsScreen> {
                             clipBehavior: Clip.antiAlias,
                             margin: const EdgeInsets.all(8.0),
                             child: TableCalendar(
+                              headerStyle: HeaderStyle(
+                                  titleCentered: true,
+                                  titleTextStyle: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color)),
+                              daysOfWeekStyle: DaysOfWeekStyle(
+                                  weekdayStyle: TextStyle(
+                                      fontSize: AppFontSizes.normal,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color),
+                                  weekendStyle: TextStyle(
+                                      fontSize: AppFontSizes.normal,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color)),
                               rowHeight: 70,
+                              locale:
+                                  Localizations.localeOf(context).toString(),
                               focusedDay: _focusedDay,
                               selectedDayPredicate: (day) =>
                                   isSameDay(_selectedDay, day),
@@ -151,9 +178,38 @@ class _BillsScreenState extends State<BillsScreen> {
                               availableCalendarFormats: const {
                                 CalendarFormat.month: 'Month'
                               },
-                              calendarStyle: const CalendarStyle(
-                                  defaultTextStyle: TextStyle(fontSize: 20),
-                                  weekendTextStyle: TextStyle(fontSize: 20)),
+                              calendarStyle: CalendarStyle(
+                                  todayDecoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .bottomNavigationBarTheme
+                                          .backgroundColor),
+                                  todayTextStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color),
+                                  selectedTextStyle: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color),
+                                  selectedDecoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context).primaryColor),
+                                  defaultTextStyle: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color),
+                                  weekendTextStyle: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color)),
                               calendarBuilders: CalendarBuilders(
                                 markerBuilder: (context, date, events) {
                                   if (events.isNotEmpty) {
@@ -241,14 +297,14 @@ class _BillsScreenState extends State<BillsScreen> {
   Widget _buildEventsMarker(DateTime date, List<Bill> bills) {
     if (bills.any((bill) => bill.isPaid == false)) {
       return const Center(
-          child:
-              Icon(Icons.new_releases, color: AppColors.toDoColor, size: 16));
+          child: Icon(Icons.new_releases,
+              color: AppBaseColors.toDoColor, size: 16));
     }
 
     return const Center(
         child: Icon(
       Icons.verified,
-      color: AppColors.doneColor,
+      color: AppBaseColors.doneColor,
       size: 16,
     ));
   }

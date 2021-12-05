@@ -35,7 +35,7 @@ class PositiveNumberTextFormFieldWidget extends StatelessWidget {
             controller.text = value!;
           },
           textInputAction: TextInputAction.next,
-          decoration: getInputDecoration(iconData, hintText)),
+          decoration: getInputDecoration(context, iconData, hintText)),
     );
   }
 }

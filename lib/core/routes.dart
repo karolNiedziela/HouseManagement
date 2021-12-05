@@ -13,7 +13,7 @@ class AppRoutes {
   static const shoppingListDetails = "shopping_list_details";
   static const bills = "bills";
   static const home = "home";
-  static const user_settings = "settings";
+  static const userSettings = "settings";
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return MaterialPageRoute(
@@ -30,7 +30,7 @@ class AppRoutes {
               return const ShoppingListDetailsScreen();
             case bills:
               return const BillsScreen();
-            case user_settings:
+            case userSettings:
               return const SettingsScreen();
             default:
               return const BaseHouseholdScreen();

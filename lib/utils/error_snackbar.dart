@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/colors.dart';
+import 'package:housemanagement/core/base_colors.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 
 class ErrorSnackBar {
   static void showError(BuildContext context, String message) {
@@ -10,7 +11,7 @@ class ErrorSnackBar {
             Flexible(
               child: Text(message.toString(),
                   style: const TextStyle(
-                    fontSize: 17,
+                    fontSize: AppFontSizes.big,
                   )),
             ),
             const SizedBox(width: 20),
@@ -18,7 +19,7 @@ class ErrorSnackBar {
               onTap: () {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
               },
-              child: const Icon(Icons.close, color: AppColors.whiteColor),
+              child: const Icon(Icons.close, color: AppBaseColors.whiteColor),
             )
           ]),
     );
