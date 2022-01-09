@@ -5,6 +5,7 @@ class PopupMenuWidget extends StatefulWidget {
   final VoidCallback? editAction;
   final bool isEditVisible;
   final VoidCallback? deleteAction;
+  final bool isDeleteVisible;
   final List<AdditionalPopupMenuItem>? additionalPopupMenuItems;
   final bool isAppBar;
   const PopupMenuWidget(
@@ -12,6 +13,7 @@ class PopupMenuWidget extends StatefulWidget {
       this.editAction,
       this.isEditVisible = true,
       this.deleteAction,
+      this.isDeleteVisible = true,
       this.additionalPopupMenuItems,
       this.isAppBar = false})
       : super(key: key);
@@ -48,16 +50,17 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
                 const Duration(), () => widget.editAction!.call());
           }));
     }
-
-    defaultPopupMenuItems.add(PopupMenuItem(
-      child: const Text('Usuń'),
-      onTap: () {
-        Future<void>.delayed(
-            const Duration(),
-            () => FormDialog.showConfirmDeleteDialog(
-                context: context, onYesPressed: widget.deleteAction!));
-      },
-    ));
+    if (widget.isDeleteVisible) {
+      defaultPopupMenuItems.add(PopupMenuItem(
+        child: const Text('Usuń'),
+        onTap: () {
+          Future<void>.delayed(
+              const Duration(),
+              () => FormDialog.showConfirmDeleteDialog(
+                  context: context, onYesPressed: widget.deleteAction!));
+        },
+      ));
+    }
 
     return defaultPopupMenuItems;
   }

@@ -3,6 +3,7 @@ import 'package:housemanagement/models/app_user.dart';
 import 'package:housemanagement/models/household.dart';
 import 'package:housemanagement/models/household_app_user.dart';
 import 'package:housemanagement/services/auth_service.dart';
+import 'package:housemanagement/services/user_service.dart';
 
 class HouseholdService {
   final householdCollection =
@@ -100,5 +101,15 @@ class HouseholdService {
       'uIds': FieldValue.arrayRemove([userUIdToRemove]),
       'users': FieldValue.arrayRemove([userToRemove])
     });
+  }
+
+  Future leaveHousehold() async {
+    final userService = UserService();
+    final authService = AuthService();
+
+    var currentUId = authService.uid!;
+    await removeFromHouseHold(authService.uid!, authService.uid!);
+
+    await userService.clearAcceptedInvitations(currentUId);
   }
 }

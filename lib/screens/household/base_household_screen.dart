@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:housemanagement/screens/household/household_screen.dart';
 import 'package:housemanagement/screens/household/invitations/invitation_screen.dart';
 import 'package:housemanagement/screens/household/statistics/expenses/expenses_screen.dart';
+import 'package:housemanagement/services/household_service.dart';
+import 'package:housemanagement/utils/form_dialog.dart';
 import 'package:housemanagement/widgets/drawer_widget.dart';
+import 'package:housemanagement/widgets/popup_menu_widget.dart';
 
 class BaseHouseholdScreen extends StatefulWidget {
   const BaseHouseholdScreen({Key? key}) : super(key: key);
@@ -12,6 +15,8 @@ class BaseHouseholdScreen extends StatefulWidget {
 }
 
 class _BaseHouseholdScreenState extends State<BaseHouseholdScreen> {
+  final householdService = HouseholdService();
+
   int _selectedIndex = 0;
 
   final List<Widget> _tabList = <Widget>[
@@ -32,6 +37,9 @@ class _BaseHouseholdScreenState extends State<BaseHouseholdScreen> {
       appBar: AppBar(
         title: Text(_titles[_selectedIndex]),
         centerTitle: true,
+        actions: <Widget>[
+          getPopupMenuWidget(),
+        ],
       ),
       drawer: const DrawerWidget(),
       body: _tabList[_selectedIndex],
@@ -67,5 +75,24 @@ class _BaseHouseholdScreenState extends State<BaseHouseholdScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Widget getPopupMenuWidget() {
+    return PopupMenuWidget(
+      additionalPopupMenuItems: [
+        AdditionalPopupMenuItem(
+            onTap: () {
+              FormDialog.showConfirmDeleteDialog(
+                  context: context,
+                  onYesPressed: () async {
+                    await householdService.leaveHousehold();
+                  },
+                  text: 'Czy na pewno chcesz opuścić grupę domową?');
+            },
+            text: 'Opuść')
+      ],
+      isDeleteVisible: false,
+      isEditVisible: false,
+    );
   }
 }

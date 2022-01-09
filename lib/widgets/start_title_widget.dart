@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:housemanagement/core/light_theme_colors.dart';
 
 class StartTitleWidget extends StatelessWidget {
   const StartTitleWidget({Key? key}) : super(key: key);

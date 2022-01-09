@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housemanagement/core/font_sizes.dart';
 import 'package:housemanagement/shared/shared_styles.dart';
 import 'package:housemanagement/services/auth_service.dart';
 import 'package:housemanagement/utils/error_snackbar.dart';
@@ -87,23 +88,33 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text(
-                            "Nie masz konta? ",
-                          ),
+                          const Text("Nie masz konta? ",
+                              style: TextStyle(
+                                  fontSize: AppFontSizes.normal,
+                                  fontWeight: FontWeight.bold)),
                           GestureDetector(
                             onTap: () {
                               widget.toggleView();
                             },
-                            child: const Text(
-                              "Zarejestruj się",
-                            ),
+                            child: Text("Zarejestruj się",
+                                style: TextStyle(
+                                    fontSize: AppFontSizes.normal,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor)),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[Text('Zapomniałeś hasła?')],
+                        children: const <Widget>[
+                          Text(
+                            'Zapomniałeś hasła?',
+                            style: TextStyle(
+                                fontSize: AppFontSizes.normal,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       )
                     ],
                   )),

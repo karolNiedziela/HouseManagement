@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:housemanagement/core/base_colors.dart';
 import 'package:housemanagement/core/dart_theme_colors.dart';
 import 'package:housemanagement/core/font_sizes.dart';

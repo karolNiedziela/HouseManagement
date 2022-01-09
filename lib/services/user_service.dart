@@ -158,4 +158,16 @@ class UserService {
               .createHousehold([sender, receiver], senderUId);
     }
   }
+
+  Future clearAcceptedInvitations(String currentUId) async {
+    var currentUserInvitations = await userCollection
+        .doc(currentUId)
+        .collection('invitations')
+        .where('invitationStatus', isEqualTo: InvitationStatus.accepted.index)
+        .get();
+
+    for (var doc in currentUserInvitations.docs) {
+      await doc.reference.delete();
+    }
+  }
 }
