@@ -25,7 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Expanded(
               child: Card(
                   child: ListTile(
-            title: Text("Motywy"),
+            title: Text("Motyw jasny/ciemny"),
             trailing: ChangeThemeButtonWidget(),
           )))
         ],

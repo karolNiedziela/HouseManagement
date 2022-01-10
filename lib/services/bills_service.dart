@@ -67,7 +67,7 @@ class BillsService {
   }
 
   Future<Map<String, double>> getMonthlyExpenses() async {
-    var bills = (await billsCollection.where('isPaid', isEqualTo: true).get())
+    var bills = (await billsCollection.where('isPaid', isEqualTo: true).where('dateOfPayment', isGreaterThanOrEqualTo: '2022-01-01').get())
         .docs
         .map((doc) => Bill.fromMap(doc.data()))
         .toList();

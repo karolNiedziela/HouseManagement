@@ -166,7 +166,7 @@ class ShoppingListService {
 
   Future<Map<String, double>> getMonthlyExpenses() async {
     var shoppingLists =
-        (await shoppingListCollection.where('isDone', isEqualTo: true).get())
+        (await shoppingListCollection.where('isDone', isEqualTo: true).where('dateCreated', isLessThanOrEqualTo: '2022-01-01').get())
             .docs
             .map((doc) => ShoppingList.fromMap(doc.data()))
             .toList();
